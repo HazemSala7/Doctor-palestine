@@ -30,7 +30,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.example.clinic_dr_alla"
+    namespace = "doctor.ps.clinics"
     compileSdk = 34
     ndkVersion = 23
 
@@ -45,7 +45,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.clinic_dr_alla"
+        applicationId = "doctor.ps.clinics"
         minSdk = 23
         targetSdk = 34
         versionCode = flutterVersionCode.toInteger()

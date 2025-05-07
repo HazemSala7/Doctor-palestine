@@ -102,7 +102,7 @@ class _MainScreenState extends State<MainScreen>
                       } else {
                         List<SliderModel>? album = [];
                         if (snapshot.data != null) {
-                          List mysslide = snapshot.data;
+                          List mysslide = snapshot.data["sliders"];
                           album = mysslide.map((s) {
                             SliderModel c = SliderModel.fromJson(s);
                             return c;
@@ -155,162 +155,61 @@ class _MainScreenState extends State<MainScreen>
                                   ),
                                 ],
                               ),
-                              GridView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: categories.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 12,
-                                  crossAxisSpacing: 12,
-                                  childAspectRatio: 1.3,
-                                ),
-                                itemBuilder: (context, index) {
-                                  final category = categories[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      switch (category['id']) {
-                                        case '1':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      CitiesPage()));
-                                          break;
-                                        case '2':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      ClinicsPage()));
-                                          break;
-                                        case '6':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      DoctorCategoriesPage()));
-                                          break;
-                                        case '3':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      HospitalsPage()));
-                                          break;
-                                        case '4':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      PharmaciesPage()));
-                                          break;
-                                        case '5':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      LaboratoriesPage()));
-                                          break;
-                                        case '7':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      RadiologyCentersPage()));
-                                          break;
-                                        case '8':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      BeautyCentersPage()));
-                                          break;
-                                        case '9':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      MedicalWarehousesPage()));
-                                          break;
-                                        case '10':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      NutritionCentersPage()));
-                                          break;
-                                        case '11':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      OpticsPage()));
-                                          break;
-                                        case '12':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      MedicalTreatmentCentersPage()));
-                                          break;
-                                        case '13':
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) => JobsPage()));
-                                          break;
-                                      }
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.08),
-                                            blurRadius: 10,
-                                            offset: Offset(0, 4),
+                              Column(
+                                children: [
+                                  // Grid: First 4 categories
+                                  GridView.count(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 12,
+                                    crossAxisSpacing: 12,
+                                    childAspectRatio: 1.3,
+                                    children: List.generate(4, (index) {
+                                      return buildCategoryTile(
+                                          categories[index], context);
+                                    }),
+                                  ),
+
+                                  // Full-width banner
+                                  if (snapshot.data["advertisement"]
+                                          ?["image"] !=
+                                      null)
+                                    InkWell(
+                                      onTap: () {},
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 8),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                          child: Image.network(
+                                            "https://qadrs.com/clinics_backend/storage/${snapshot.data["advertisement"]["image"]}",
+                                            height: 150,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
                                           ),
-                                        ],
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 16, horizontal: 8),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            height: 80,
-                                            width: 80,
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFF5F6FA),
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            child: Image.asset(
-                                              category['image']!,
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ),
-                                          SizedBox(height: 12),
-                                          Text(
-                                            category['name']!,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black87,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
+                                        ),
                                       ),
                                     ),
-                                  );
-                                },
+
+                                  // Grid: Remaining categories
+                                  GridView.count(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 12,
+                                    crossAxisSpacing: 12,
+                                    childAspectRatio: 1.3,
+                                    children: List.generate(
+                                      categories.length - 4,
+                                      (index) {
+                                        return buildCategoryTile(
+                                            categories[index + 4], context);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(
                                 height: 20,
@@ -327,6 +226,111 @@ class _MainScreenState extends State<MainScreen>
                       }
                     }),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCategoryTile(Map<String, String> category, BuildContext context) {
+    return InkWell(
+      onTap: () {
+        switch (category['id']) {
+          case '1':
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => CitiesPage()));
+            break;
+          case '2':
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => ClinicsPage()));
+            break;
+          case '3':
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => HospitalsPage()));
+            break;
+          case '4':
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => PharmaciesPage()));
+            break;
+          case '5':
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => LaboratoriesPage()));
+            break;
+          case '6':
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => DoctorCategoriesPage()));
+            break;
+          case '7':
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => RadiologyCentersPage()));
+            break;
+          case '8':
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => BeautyCentersPage()));
+            break;
+          case '9':
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => MedicalWarehousesPage()));
+            break;
+          case '10':
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => NutritionCentersPage()));
+            break;
+          case '11':
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => OpticsPage()));
+            break;
+          case '12':
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => MedicalTreatmentCentersPage()));
+            break;
+          case '13':
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => JobsPage()));
+            break;
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 80,
+              width: 80,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Color(0xFFF5F6FA),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Image.asset(
+                category['image']!,
+                fit: BoxFit.contain,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              category['name']!,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
