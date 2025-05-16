@@ -46,7 +46,8 @@ class _ClinicsState extends State<Clinics> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => FavouriteProvider()),
+        ChangeNotifierProvider(
+            create: (_) => FavoriteProvider()..loadFavorites()),
       ],
       child: MaterialApp(
         localizationsDelegates: const [

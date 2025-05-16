@@ -1,14 +1,12 @@
 import 'dart:io';
 import 'package:clinic_dr_alla/Components/custom_massage/custom_massage.dart';
 import 'package:clinic_dr_alla/Constants/Constants.dart';
-import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/account-screen/account-screen.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/categories_screen/categories_screen.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/clinics_home_page/clinics_home_page.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/favourite_screen/favourite_screen.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:upgrader/upgrader.dart';
@@ -78,6 +76,16 @@ class _HomeScreenState extends State<HomeScreen> {
         item: ItemConfig(
           icon: ImageIcon(AssetImage("assets/images/hospital.png")),
           title: "الأطباء/العيادات",
+          activeForegroundColor: Colors.red,
+        ),
+      ),
+      PersistentTabConfig(
+        screen: FavoritesPage(
+            changeTabIndex: (index) => _changeTab(index),
+            onLanguageSelected: widget.onLanguageSelected),
+        item: ItemConfig(
+          icon: ImageIcon(AssetImage("assets/images/wishlist.png")),
+          title: "المفضلة",
           activeForegroundColor: Colors.red,
         ),
       ),

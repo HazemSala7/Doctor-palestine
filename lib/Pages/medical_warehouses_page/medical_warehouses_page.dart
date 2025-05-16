@@ -151,7 +151,7 @@ class _MedicalWarehousesPageState extends State<MedicalWarehousesPage> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => MedicalWarehouseDetailsPage(
-                                  MedicalWarehouse: pharmacy),
+                                  medicalWarehouse: pharmacy),
                             ),
                           );
                         },

@@ -38,21 +38,18 @@ class CartDatabaseHelper {
 
   Future<void> _createDb(Database db) async {
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS favorites (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        productId INTEGER NOT NULL,
-        name TEXT NOT NULL,
-        name_en TEXT NOT NULL,
-        name_he TEXT NOT NULL,
-        desc TEXT NOT NULL,
-        category_id TEXT NOT NULL,
-        image TEXT NOT NULL,
-        discount TEXT NOT NULL,
-        price REAL NOT NULL,
-        color TEXT DEFAULT '',
-        size TEXT DEFAULT ''
-      )
-    ''');
+  CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    productId INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    name_en TEXT NOT NULL,
+    name_he TEXT NOT NULL,
+    desc TEXT NOT NULL,
+    image TEXT NOT NULL,
+    color TEXT DEFAULT '',
+    size TEXT DEFAULT ''
+  )
+''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {

@@ -154,7 +154,7 @@ class _MedicalTreatmentCentersPageState
                             context,
                             MaterialPageRoute(
                               builder: (_) => MedicalTreatmentCenterDetailsPage(
-                                  MedicalTreatmentCenter: pharmacy),
+                                  medicalTreatmentCenter: pharmacy),
                             ),
                           );
                         },

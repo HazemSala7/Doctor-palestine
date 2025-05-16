@@ -1,13 +1,16 @@
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
+import 'package:clinic_dr_alla/Local/Model/FavoriteItem/FavoriteItem.dart';
+import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
 import 'package:clinic_dr_alla/Pages/google_map_screen/google_map_screen.dart';
 import 'package:clinic_dr_alla/model/medical_warehouse_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MedicalWarehouseDetailsPage extends StatelessWidget {
-  final MedicalWarehouseModel MedicalWarehouse;
+  final MedicalWarehouseModel medicalWarehouse;
 
-  const MedicalWarehouseDetailsPage({Key? key, required this.MedicalWarehouse})
+  const MedicalWarehouseDetailsPage({Key? key, required this.medicalWarehouse})
       : super(key: key);
 
   Future<void> _makeCall(String phone) async {
@@ -15,27 +18,58 @@ class MedicalWarehouseDetailsPage extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      throw 'Could not call $phone';
+      throw 'تعذر الاتصال بـ $phone';
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final favoriteProvider = Provider.of<FavoriteProvider>(context);
+    final isFavorite = favoriteProvider.isFavorite(medicalWarehouse.id);
+
     return Scaffold(
-      appBar: MyCustomAppBar(name: MedicalWarehouse.name),
+      appBar: MyCustomAppBar(
+        name: medicalWarehouse.name,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.red,
+            ),
+            onPressed: () {
+              if (isFavorite) {
+                favoriteProvider.removeFavorite(medicalWarehouse.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("تمت إزالة المستودع من المفضلة")),
+                );
+              } else {
+                final item = FavoriteItem(
+                  productId: medicalWarehouse.id,
+                  name: medicalWarehouse.name,
+                  nameEn: medicalWarehouse.name,
+                  nameHe: medicalWarehouse.name,
+                  desc: medicalWarehouse.description,
+                  image: medicalWarehouse.coverImage,
+                );
+                favoriteProvider.addFavorite(item);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("تمت إضافة المستودع إلى المفضلة")),
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cover Image
             Image.network(
-              MedicalWarehouse.coverImage,
+              medicalWarehouse.coverImage,
               width: double.infinity,
               height: 220,
               fit: BoxFit.cover,
             ),
-
-            // Logo + Info
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -43,7 +77,7 @@ class MedicalWarehouseDetailsPage extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      MedicalWarehouse.logoImage,
+                      medicalWarehouse.logoImage,
                       height: 80,
                       width: 80,
                       fit: BoxFit.cover,
@@ -55,33 +89,29 @@ class MedicalWarehouseDetailsPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          MedicalWarehouse.name,
+                          medicalWarehouse.name,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 6),
-                        Text("📍 ${MedicalWarehouse.address}"),
-                        Text("🏙 المدينة: ${MedicalWarehouse.cityName}"),
-                        Text("💼 الخبرة: ${MedicalWarehouse.experiance} سنة"),
+                        Text("📍 ${medicalWarehouse.address}"),
+                        Text("🏙 المدينة: ${medicalWarehouse.cityName}"),
+                        Text("💼 الخبرة: ${medicalWarehouse.experiance} سنة"),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-
-            // Description
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                MedicalWarehouse.description,
+                medicalWarehouse.description,
                 style: TextStyle(fontSize: 15),
                 textAlign: TextAlign.justify,
               ),
             ),
-
             SizedBox(height: 20),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Column(
@@ -90,15 +120,16 @@ class MedicalWarehouseDetailsPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () => _makeCall(MedicalWarehouse.mobile),
+                          onPressed: () => _makeCall(medicalWarehouse.mobile),
                           icon: Icon(Icons.phone),
-                          label: Text('اتصل الآن: ${MedicalWarehouse.mobile}'),
+                          label: Text('اتصل الآن: ${medicalWarehouse.mobile}'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green[700],
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
@@ -110,23 +141,24 @@ class MedicalWarehouseDetailsPage extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            if (MedicalWarehouse.latitude != null &&
-                                MedicalWarehouse.longitude != null) {
+                            if (medicalWarehouse.latitude != null &&
+                                medicalWarehouse.longitude != null) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => GoogleMapScreen(
-                                    hospitalName: MedicalWarehouse.name,
-                                    lat: MedicalWarehouse.latitude!,
-                                    lng: MedicalWarehouse.longitude!,
+                                    hospitalName: medicalWarehouse.name,
+                                    lat: medicalWarehouse.latitude!,
+                                    lng: medicalWarehouse.longitude!,
                                   ),
                                 ),
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content:
-                                        Text("الموقع غير متوفر لهذا المستشفى")),
+                                  content:
+                                      Text("الموقع غير متوفر لهذا المستودع"),
+                                ),
                               );
                             }
                           },
@@ -137,7 +169,8 @@ class MedicalWarehouseDetailsPage extends StatelessWidget {
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),

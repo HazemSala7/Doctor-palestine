@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class MyCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
+  final List<Widget>? actions; // ✅ Add this
 
-  const MyCustomAppBar({Key? key, required this.name}) : super(key: key);
+  const MyCustomAppBar({
+    Key? key,
+    required this.name,
+    this.actions, // ✅ Make it optional
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +29,7 @@ class MyCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       elevation: 0,
       centerTitle: true,
+      actions: actions, // ✅ Support additional actions
     );
   }
 

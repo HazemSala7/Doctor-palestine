@@ -1,7 +1,10 @@
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
+import 'package:clinic_dr_alla/Local/Model/FavoriteItem/FavoriteItem.dart';
+import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
 import 'package:clinic_dr_alla/Pages/google_map_screen/google_map_screen.dart';
 import 'package:clinic_dr_alla/model/clinic_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DoctorDetailsPage extends StatelessWidget {
@@ -16,10 +19,79 @@ class DoctorDetailsPage extends StatelessWidget {
     }
   }
 
+  void _showSuggestionDialog(BuildContext context) {
+    TextEditingController suggestionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text("اقتراح تعديل"),
+        content: TextField(
+          controller: suggestionController,
+          maxLines: 3,
+          decoration: InputDecoration(hintText: "اكتب ملاحظتك هنا"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text("إلغاء"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              String suggestion = suggestionController.text.trim();
+              if (suggestion.isNotEmpty) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("تم إرسال اقتراحك بنجاح")),
+                );
+              }
+            },
+            child: Text("إرسال"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final favoriteProvider = Provider.of<FavoriteProvider>(context);
+    final isFavorite = favoriteProvider.isFavorite(doctor.id);
+
     return Scaffold(
-      appBar: MyCustomAppBar(name: doctor.name),
+      appBar: MyCustomAppBar(
+        name: doctor.name,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.red,
+            ),
+            onPressed: () {
+              if (isFavorite) {
+                favoriteProvider.removeFavorite(doctor.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("تمت إزالة العنصر من المفضلة")),
+                );
+              } else {
+                final item = FavoriteItem(
+                  productId: doctor.id,
+                  name: doctor.name,
+                  nameEn: doctor.name,
+                  nameHe: doctor.name,
+                  desc: doctor.description,
+                  image: doctor.image,
+                );
+
+                favoriteProvider.addFavorite(item);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("تمت إضافة العنصر إلى المفضلة")),
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -68,7 +140,8 @@ class DoctorDetailsPage extends StatelessWidget {
                   textStyle:
                       TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -103,15 +176,24 @@ class DoctorDetailsPage extends StatelessWidget {
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(
-              height: 50,
-            )
+            SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => _showSuggestionDialog(context),
+              icon: Icon(Icons.feedback),
+              label: Text("اقتراح تعديل"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+            ),
+            SizedBox(height: 50),
           ],
         ),
       ),

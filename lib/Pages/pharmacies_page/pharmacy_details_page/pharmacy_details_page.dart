@@ -1,7 +1,10 @@
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
+import 'package:clinic_dr_alla/Local/Model/FavoriteItem/FavoriteItem.dart';
+import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
 import 'package:clinic_dr_alla/Pages/google_map_screen/google_map_screen.dart';
 import 'package:clinic_dr_alla/model/pharmacy_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PharmacyDetailsPage extends StatelessWidget {
@@ -15,14 +18,48 @@ class PharmacyDetailsPage extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      throw 'Could not call $phone';
+      throw 'تعذر الاتصال بـ $phone';
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final favoriteProvider = Provider.of<FavoriteProvider>(context);
+    final isFavorite = favoriteProvider.isFavorite(pharmacy.id);
+
     return Scaffold(
-      appBar: MyCustomAppBar(name: pharmacy.name),
+      appBar: MyCustomAppBar(
+        name: pharmacy.name,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.red,
+            ),
+            onPressed: () {
+              if (isFavorite) {
+                favoriteProvider.removeFavorite(pharmacy.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("تمت إزالة الصيدلية من المفضلة")),
+                );
+              } else {
+                final item = FavoriteItem(
+                  productId: pharmacy.id,
+                  name: pharmacy.name,
+                  nameEn: pharmacy.name,
+                  nameHe: pharmacy.name,
+                  desc: pharmacy.description,
+                  image: pharmacy.coverImage,
+                );
+                favoriteProvider.addFavorite(item);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("تمت إضافة الصيدلية إلى المفضلة")),
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,6 +119,7 @@ class PharmacyDetailsPage extends StatelessWidget {
 
             SizedBox(height: 20),
 
+            // Call & Map Buttons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Column(
@@ -98,7 +136,8 @@ class PharmacyDetailsPage extends StatelessWidget {
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
@@ -125,8 +164,9 @@ class PharmacyDetailsPage extends StatelessWidget {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content:
-                                        Text("الموقع غير متوفر لهذا المستشفى")),
+                                  content:
+                                      Text("الموقع غير متوفر لهذه الصيدلية"),
+                                ),
                               );
                             }
                           },
@@ -137,7 +177,8 @@ class PharmacyDetailsPage extends StatelessWidget {
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
