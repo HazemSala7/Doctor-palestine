@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:clinic_dr_alla/Constants/Constants.dart';
+import 'package:clinic_dr_alla/Pages/about_us/about_us.dart';
+import 'package:clinic_dr_alla/Pages/privacy_policy/privacy_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,10 +89,10 @@ class _ProfileState extends State<Profile> {
                         icon: Icons.info,
                         iconornot: true,
                         NavigatorFunction: () {
-                          // pushWithoutNavBar(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => WhoWeAre()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WhoWeAre()));
                         }),
                     lineMethod(),
                     profileCard(
@@ -98,12 +100,10 @@ class _ProfileState extends State<Profile> {
                         icon: Icons.privacy_tip,
                         iconornot: true,
                         NavigatorFunction: () {
-                          // pushWithoutNavBar(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => Privacy(
-                          //               languageCode: widget.languageCode,
-                          //             )));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Privacy()));
                         }),
                     lineMethod(),
                   ],
