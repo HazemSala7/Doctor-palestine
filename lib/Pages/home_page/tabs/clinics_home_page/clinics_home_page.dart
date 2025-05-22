@@ -121,7 +121,10 @@ class _ClinicsHomePageState extends State<ClinicsHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('العيادات / الأطباء')),
+      appBar: AppBar(
+        title: Text('العيادات / الأطباء'),
+        centerTitle: true,
+      ),
       body: _clinics.isEmpty && _isLoading
           ? Center(child: SpinKitPulse(color: kMainColor, size: 60))
           : Column(

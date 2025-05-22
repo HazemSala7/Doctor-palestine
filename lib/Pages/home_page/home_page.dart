@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:clinic_dr_alla/Components/custom_massage/custom_massage.dart';
 import 'package:clinic_dr_alla/Constants/Constants.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/account-screen/account-screen.dart';
-import 'package:clinic_dr_alla/Pages/home_page/tabs/categories_screen/categories_screen.dart';
+import 'package:clinic_dr_alla/Pages/home_page/tabs/categories_screen/jobs_home_page.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/clinics_home_page/clinics_home_page.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/favourite_screen/favourite_screen.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/main_screen/main_screen.dart';
@@ -58,13 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       PersistentTabConfig(
-        screen: Categories(
+        screen: JobsHomePage(
           changeTabIndex: (index) => _changeTab(index),
           onLanguageSelected: widget.onLanguageSelected,
         ),
         item: ItemConfig(
-          icon: const Icon(Icons.category),
-          title: "الأقسام",
+          icon: const Icon(Icons.work),
+          title: "الوظائف",
           activeForegroundColor: Colors.orange,
         ),
       ),

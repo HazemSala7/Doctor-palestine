@@ -6,12 +6,18 @@ import 'package:clinic_dr_alla/services/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class JobsPage extends StatefulWidget {
+class JobsHomePage extends StatefulWidget {
+  final void Function(int) changeTabIndex;
+  final Function(String) onLanguageSelected;
   @override
-  _JobsPageState createState() => _JobsPageState();
+  const JobsHomePage({
+    required this.changeTabIndex,
+    required this.onLanguageSelected,
+  });
+  _JobsHomePageState createState() => _JobsHomePageState();
 }
 
-class _JobsPageState extends State<JobsPage> {
+class _JobsHomePageState extends State<JobsHomePage> {
   final ScrollController _scrollController = ScrollController();
   List<JobModel> _pharmacies = [];
   int _currentPage = 1;
@@ -85,7 +91,10 @@ class _JobsPageState extends State<JobsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('العيادات / الأطباء')),
+      appBar: AppBar(
+        title: Text('الوظائف'),
+        centerTitle: true,
+      ),
       body: _pharmacies.isEmpty && _isLoading
           ? Center(child: CircularProgressIndicator())
           : Column(
