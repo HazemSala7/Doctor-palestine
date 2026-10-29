@@ -1,3 +1,5 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'dart:convert';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/Constants/Constants.dart';
@@ -71,7 +73,7 @@ class _CitiesPageState extends State<CitiesPage> {
                       crossAxisSpacing: 12,
                       childAspectRatio: 1.3,
                     ),
-                    itemBuilder: (context, index) {
+                    itemBuilder: animatedItemBuilder((context, index) {
                       final city = cities[index];
                       return InkWell(
                         onTap: () {
@@ -108,7 +110,7 @@ class _CitiesPageState extends State<CitiesPage> {
                                   color: Color(0xFFF5F6FA),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                child: Image.network(
+                                child: NetImage(
                                   '${city.image}',
                                   fit: BoxFit.contain,
                                 ),
@@ -127,7 +129,7 @@ class _CitiesPageState extends State<CitiesPage> {
                           ),
                         ),
                       );
-                    },
+                    }),
                   ),
                 );
               } else {

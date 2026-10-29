@@ -1,3 +1,5 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'dart:convert';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/model/job_model.dart';
@@ -91,12 +93,9 @@ class _JobsHomePageState extends State<JobsHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('الوظائف'),
-        centerTitle: true,
-      ),
+      appBar: MyCustomAppBar(name: 'الوظائف', showBack: false),
       body: _pharmacies.isEmpty && _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const AppLoader()
           : Column(
               children: [
                 Padding(
@@ -135,7 +134,7 @@ class _JobsHomePageState extends State<JobsHomePage> {
                   child: ListView.builder(
                     controller: _scrollController,
                     itemCount: _pharmacies.length,
-                    itemBuilder: (context, index) {
+                    itemBuilder: animatedItemBuilder((context, index) {
                       final job = _pharmacies[index];
                       return Card(
                         margin:
@@ -151,7 +150,7 @@ class _JobsHomePageState extends State<JobsHomePage> {
                               if (job.city?.image != null)
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
+                                  child: NetImage(
                                     job.city!.image,
                                     height: 160,
                                     width: double.infinity,
@@ -188,7 +187,7 @@ class _JobsHomePageState extends State<JobsHomePage> {
                           ),
                         ),
                       );
-                    },
+                    }),
                   ),
                 ),
                 SizedBox(

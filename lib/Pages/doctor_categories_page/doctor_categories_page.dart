@@ -1,3 +1,5 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'dart:convert';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/Pages/clinics_page/clinics_page.dart';
@@ -45,7 +47,7 @@ class _DoctorCategoriesPageState extends State<DoctorCategoriesPage> {
     return Scaffold(
       appBar: MyCustomAppBar(name: "تخصصات الأطباء"),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const AppLoader()
           : GridView.builder(
               padding: EdgeInsets.all(12),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -55,7 +57,7 @@ class _DoctorCategoriesPageState extends State<DoctorCategoriesPage> {
                 mainAxisSpacing: 12,
               ),
               itemCount: _categories.length,
-              itemBuilder: (context, index) {
+              itemBuilder: animatedItemBuilder((context, index) {
                 final category = _categories[index];
                 return InkWell(
                   onTap: () {
@@ -77,7 +79,7 @@ class _DoctorCategoriesPageState extends State<DoctorCategoriesPage> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
+                          child: NetImage(
                             category.image,
                             height: 80,
                             width: 80,
@@ -93,7 +95,7 @@ class _DoctorCategoriesPageState extends State<DoctorCategoriesPage> {
                     ),
                   ),
                 );
-              },
+              }),
             ),
     );
   }

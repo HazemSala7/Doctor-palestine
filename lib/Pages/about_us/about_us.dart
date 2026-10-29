@@ -1,5 +1,6 @@
+import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'dart:convert';
-import 'package:clinic_dr_alla/Constants/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -46,28 +47,12 @@ class _WhoWeAreState extends State<WhoWeAre> {
       color: Colors.white,
       child: SafeArea(
         child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            centerTitle: true,
-            title: Text(
-              "من نحن",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.arrow_back_sharp,
-                color: kMainColor,
-                size: 25,
-              ),
-            ),
-          ),
-          body: SingleChildScrollView(
+          appBar: MyCustomAppBar(name: 'من نحن'),
+          body: FadeSlideIn(
+              child: SingleChildScrollView(
             padding: EdgeInsets.all(16),
             child: Html(data: _htmlContent),
-          ),
+          )),
         ),
       ),
     );

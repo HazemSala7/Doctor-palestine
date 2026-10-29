@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Constants/Constants.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,8 @@ class _PrivacyState extends State<Privacy> {
       color: Colors.white,
       child: SafeArea(
         child: Scaffold(
-          body: SingleChildScrollView(
+          body: FadeSlideIn(
+              child: SingleChildScrollView(
             child: Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +64,7 @@ class _PrivacyState extends State<Privacy> {
                 ],
               ),
             ),
-          ),
+          )),
         ),
       ),
     );

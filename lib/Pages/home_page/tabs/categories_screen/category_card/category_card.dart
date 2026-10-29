@@ -1,4 +1,5 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -41,7 +42,7 @@ class CategoryCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 child: FancyShimmerImage(
                   imageUrl: imageUrl,
-                  errorWidget: Image.asset('assets/Yolo-Logo.png'),
+                  errorWidget: Image.asset(kLogoAsset),
                 ),
               ),
             ),

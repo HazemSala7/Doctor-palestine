@@ -1,3 +1,5 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'dart:convert';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/model/job_model.dart';
@@ -85,9 +87,9 @@ class _JobsPageState extends State<JobsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('العيادات / الأطباء')),
+      appBar: MyCustomAppBar(name: 'وظائف في القطاع الطبي'),
       body: _pharmacies.isEmpty && _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const AppLoader()
           : Column(
               children: [
                 Padding(
@@ -126,7 +128,7 @@ class _JobsPageState extends State<JobsPage> {
                   child: ListView.builder(
                     controller: _scrollController,
                     itemCount: _pharmacies.length,
-                    itemBuilder: (context, index) {
+                    itemBuilder: animatedItemBuilder((context, index) {
                       final job = _pharmacies[index];
                       return Card(
                         margin:
@@ -142,7 +144,7 @@ class _JobsPageState extends State<JobsPage> {
                               if (job.city?.image != null)
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
+                                  child: NetImage(
                                     job.city!.image,
                                     height: 160,
                                     width: double.infinity,
@@ -179,7 +181,7 @@ class _JobsPageState extends State<JobsPage> {
                           ),
                         ),
                       );
-                    },
+                    }),
                   ),
                 ),
                 SizedBox(

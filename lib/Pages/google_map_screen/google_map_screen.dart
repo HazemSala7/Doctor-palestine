@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -18,7 +19,7 @@ class GoogleMapScreen extends StatelessWidget {
     final LatLng hospitalLocation = LatLng(lat, lng);
 
     return Scaffold(
-      appBar: AppBar(title: Text('موقع $hospitalName')),
+      appBar: MyCustomAppBar(name: 'موقع $hospitalName'),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: hospitalLocation,

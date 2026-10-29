@@ -1,12 +1,22 @@
 import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
+import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/home_page/home_page.dart';
+import 'package:clinic_dr_alla/Pages/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
+import 'package:clinic_dr_alla/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Draw behind the status and navigation bars; headers handle the insets.
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.transparent,
+  ));
   runApp(const Clinics());
 }
 
@@ -62,13 +72,12 @@ class _ClinicsState extends State<Clinics> {
         ],
         locale: locale,
         debugShowCheckedModeBanner: false,
-        title: 'Attendify',
-        theme: ThemeData(
-          fontFamily: 'Cairo',
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+        title: 'طبيبك',
+        theme: buildAppTheme(),
+        home: SplashScreen(
+          nextBuilder: (_) =>
+              HomeScreen(currentIndex: 0, onLanguageSelected: setLocale),
         ),
-        home: HomeScreen(currentIndex: 0, onLanguageSelected: setLocale),
       ),
     );
   }

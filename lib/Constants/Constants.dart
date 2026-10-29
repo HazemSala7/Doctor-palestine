@@ -1,7 +1,7 @@
 // constants.dart
 import 'package:flutter/material.dart';
 
-const Color kMainColor = Color(0xFF0A0E21); // example: dark blue
+const Color kMainColor = Color(0xFF0A3D91); // brand dark blue (logo)
 const Color kSecondaryColor = Color(0xFFEB1555); // example: pink
 final List<Map<String, String>> categories = [
   {

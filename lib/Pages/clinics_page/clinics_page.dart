@@ -1,13 +1,13 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'dart:convert';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
-import 'package:clinic_dr_alla/Constants/Constants.dart';
 import 'package:clinic_dr_alla/Pages/clinic_page/clinic_page.dart';
 import 'package:clinic_dr_alla/model/clinic_model.dart';
 import 'package:clinic_dr_alla/model/paginated_clinics_response.dart';
 import 'package:clinic_dr_alla/services/apis.dart';
 import 'package:clinic_dr_alla/services/functions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -116,7 +116,7 @@ class _ClinicsPageState extends State<ClinicsPage> {
     return Scaffold(
       appBar: MyCustomAppBar(name: "العيادات / الأطباء"),
       body: _clinics.isEmpty && _isLoading
-          ? Center(child: SpinKitPulse(color: kMainColor, size: 60))
+          ? const AppLoader()
           : Column(
               children: [
                 Padding(
@@ -234,109 +234,119 @@ class _ClinicsPageState extends State<ClinicsPage> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.all(12),
-                    itemCount: _clinics.length + (_isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index >= _clinics.length) {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
+                  child: _clinics.isEmpty && !_isLoading
+                      ? const EmptyState()
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: EdgeInsets.all(12),
+                          itemCount: _clinics.length + (_isLoading ? 1 : 0),
+                          itemBuilder: animatedItemBuilder((context, index) {
+                            if (index >= _clinics.length) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              );
+                            }
 
-                      final clinic = _clinics[index];
+                            final clinic = _clinics[index];
 
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => DoctorDetailsPage(doctor: clinic),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Card(
-                            margin: EdgeInsets.only(bottom: 16),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16)),
-                            elevation: 4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.network(
-                                      clinic.image,
-                                      height: 80,
-                                      width: 80,
-                                      fit: BoxFit.cover,
-                                    ),
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        DoctorDetailsPage(doctor: clinic),
                                   ),
-                                  SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: Card(
+                                  margin: EdgeInsets.only(bottom: 16),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16)),
+                                  elevation: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(clinic.name,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                        SizedBox(height: 4),
-                                        Text(clinic.address,
-                                            style: TextStyle(
-                                                color: Colors.grey[600])),
-                                        SizedBox(height: 4),
-                                        Text("🏙 المدينة: ${clinic.cityName}"),
-                                        Text(
-                                            "🩺 التخصص: ${clinic.categoryName}"),
-                                        SizedBox(height: 6),
-                                        Text(
-                                          clinic.description,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontSize: 12),
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          child: NetImage(
+                                            clinic.image,
+                                            height: 80,
+                                            width: 80,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
-                                        SizedBox(height: 6),
-                                        ElevatedButton.icon(
-                                          onPressed: () async {
-                                            final phoneUri = Uri.parse(
-                                                "tel:${clinic.mobile}");
-                                            if (await canLaunchUrl(phoneUri)) {
-                                              await launchUrl(phoneUri);
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                    content: Text(
-                                                        "لا يمكن إجراء المكالمة")),
-                                              );
-                                            }
-                                          },
-                                          icon: Icon(Icons.phone),
-                                          label: Text(
-                                              'اتصل الآن: ${clinic.mobile}'),
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: Colors.green,
+                                        SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(clinic.name,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              SizedBox(height: 4),
+                                              Text(clinic.address,
+                                                  style: TextStyle(
+                                                      color: Colors.grey[600])),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                  "🏙 المدينة: ${clinic.cityName}"),
+                                              Text(
+                                                  "🩺 التخصص: ${clinic.categoryName}"),
+                                              SizedBox(height: 6),
+                                              Text(
+                                                clinic.description,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                              SizedBox(height: 6),
+                                              ElevatedButton.icon(
+                                                onPressed: () async {
+                                                  final phoneUri = Uri.parse(
+                                                      "tel:${clinic.mobile}");
+                                                  if (await canLaunchUrl(
+                                                      phoneUri)) {
+                                                    await launchUrl(phoneUri);
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              "لا يمكن إجراء المكالمة")),
+                                                    );
+                                                  }
+                                                },
+                                                icon: Icon(Icons.phone),
+                                                label: Text(
+                                                    'اتصل الآن: ${clinic.mobile}'),
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          }),
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),

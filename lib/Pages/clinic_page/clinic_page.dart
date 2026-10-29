@@ -1,3 +1,5 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/Local/Model/FavoriteItem/FavoriteItem.dart';
 import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
@@ -92,13 +94,14 @@ class DoctorDetailsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: FadeSlideIn(
+          child: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(
+              child: NetImage(
                 doctor.image,
                 height: 200,
                 width: double.infinity,
@@ -196,7 +199,7 @@ class DoctorDetailsPage extends StatelessWidget {
             SizedBox(height: 50),
           ],
         ),
-      ),
+      )),
     );
   }
 

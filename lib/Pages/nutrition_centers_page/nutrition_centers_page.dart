@@ -1,3 +1,5 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'dart:convert';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/Pages/hospitals_page/hospital_details_page/hospital_details_page.dart';
@@ -96,7 +98,7 @@ class _NutritionCentersPageState extends State<NutritionCentersPage> {
     return Scaffold(
       appBar: MyCustomAppBar(name: "مراكز تغذية"),
       body: _pharmacies.isEmpty && _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const AppLoader()
           : Column(
               children: [
                 Padding(
@@ -132,120 +134,129 @@ class _NutritionCentersPageState extends State<NutritionCentersPage> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.all(12),
-                    itemCount: _pharmacies.length + (_isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index >= _pharmacies.length) {
-                        return Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
+                  child: _pharmacies.isEmpty && !_isLoading
+                      ? const EmptyState()
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: EdgeInsets.all(12),
+                          itemCount: _pharmacies.length + (_isLoading ? 1 : 0),
+                          itemBuilder: animatedItemBuilder((context, index) {
+                            if (index >= _pharmacies.length) {
+                              return Padding(
+                                padding: EdgeInsets.all(16),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              );
+                            }
 
-                      final pharmacy = _pharmacies[index];
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  HospitalDetailsPage(hospital: pharmacy),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          margin: EdgeInsets.only(bottom: 16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                          elevation: 3,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(16)),
-                                child: Image.network(pharmacy.coverImage,
-                                    height: 180,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Row(
+                            final pharmacy = _pharmacies[index];
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        HospitalDetailsPage(hospital: pharmacy),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                margin: EdgeInsets.only(bottom: 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16)),
+                                elevation: 3,
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(
-                                        pharmacy.logoImage,
-                                        height: 60,
-                                        width: 60,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16)),
+                                      child: NetImage(pharmacy.coverImage,
+                                          height: 180,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover),
                                     ),
-                                    SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
+                                    Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(pharmacy.name,
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold)),
-                                          SizedBox(height: 4),
-                                          Text(pharmacy.address,
-                                              style: TextStyle(
-                                                  color: Colors.grey[600])),
-                                          SizedBox(height: 4),
-                                          Text("المدينة: ${pharmacy.cityName}"),
-                                          Text(
-                                              "الخبرة: ${pharmacy.experiance} سنة"),
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: NetImage(
+                                              pharmacy.logoImage,
+                                              height: 60,
+                                              width: 60,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(pharmacy.name,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                SizedBox(height: 4),
+                                                Text(pharmacy.address,
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.grey[600])),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                    "المدينة: ${pharmacy.cityName}"),
+                                                Text(
+                                                    "الخبرة: ${pharmacy.experiance} سنة"),
+                                              ],
+                                            ),
+                                          ),
                                         ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 12),
+                                      child: Text(
+                                        pharmacy.description,
+                                        style: TextStyle(fontSize: 14),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton.icon(
+                                          icon: Icon(Icons.phone),
+                                          label: Text(
+                                              'اتصل الآن: ${pharmacy.mobile}'),
+                                          onPressed: () =>
+                                              _callPharmacy(pharmacy.mobile),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green,
+                                            foregroundColor: Colors.white,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 14),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12)),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12),
-                                child: Text(
-                                  pharmacy.description,
-                                  style: TextStyle(fontSize: 14),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(12),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton.icon(
-                                    icon: Icon(Icons.phone),
-                                    label:
-                                        Text('اتصل الآن: ${pharmacy.mobile}'),
-                                    onPressed: () =>
-                                        _callPharmacy(pharmacy.mobile),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
-                                      foregroundColor: Colors.white,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 14),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          }),
                         ),
-                      );
-                    },
-                  ),
                 ),
                 SizedBox(
                   height: 20,

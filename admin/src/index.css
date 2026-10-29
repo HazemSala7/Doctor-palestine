@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/Cairo.ttf") format("truetype");
+  font-weight: 200 1000;
+  font-display: swap;
+}
+
+/* Surface tokens: light values here, dark values under .dark. */
+:root {
+  --bg: #f4f8fd;
+  --card: #ffffff;
+  --card-2: #f7faff;
+  --line: #e3ebf6;
+  --ink: #0f2747;
+  --ink-2: #4a5f7d;
+  --muted: #8a9bb4;
+  --ring: rgb(21 101 192 / 0.35);
+  color-scheme: light;
+}
+.dark {
+  --bg: #0a1220;
+  --card: #111c2e;
+  --card-2: #16233a;
+  --line: #22324d;
+  --ink: #e8f0fb;
+  --ink-2: #a9b9d1;
+  --muted: #6f82a1;
+  --ring: rgb(66 165 245 / 0.45);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: "Cairo", system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-card-2: var(--card-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-brand-dark: #0a3d91;
+  --color-brand: #1565c0;
+  --color-brand-light: #42a5f5;
+  --color-brand-sky: #e3f2fd;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgb(66 165 245 / 0.3);
+}
+
+/* Thin scrollbars everywhere. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+@layer components {
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: 0.6rem 0.85rem;
+  color: var(--ink);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+.input::placeholder {
+  color: var(--muted);
+}
+.input:focus {
+  border-color: #42a5f5;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+.input[aria-invalid="true"] {
+  border-color: #e53935;
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #0a3d91 0%, #1565c0 55%, #42a5f5 100%);
+}
+}
+
+/* Entrance animations. */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.animate-slide-in {
+  animation: slide-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.animate-pop {
+  animation: pop 0.18s ease-out both;
+}
+.animate-fade {
+  animation: fade 0.2s ease-out both;
+}
+.animate-grow-x {
+  animation: grow-x 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transform-origin: right;
+}
+@layer components {
+.skeleton {
+  background: linear-gradient(90deg, var(--card-2) 25%, var(--line) 50%, var(--card-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+  border-radius: 0.5rem;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

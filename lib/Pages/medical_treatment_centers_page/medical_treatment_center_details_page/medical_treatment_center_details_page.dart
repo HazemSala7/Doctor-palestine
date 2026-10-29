@@ -1,3 +1,5 @@
+import 'package:clinic_dr_alla/Components/brand_widgets.dart';
+import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/Local/Model/FavoriteItem/FavoriteItem.dart';
 import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
@@ -62,11 +64,12 @@ class MedicalTreatmentCenterDetailsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: FadeSlideIn(
+          child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
+            NetImage(
               medicalTreatmentCenter.coverImage,
               width: double.infinity,
               height: 220,
@@ -78,7 +81,7 @@ class MedicalTreatmentCenterDetailsPage extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
+                    child: NetImage(
                       medicalTreatmentCenter.logoImage,
                       height: 80,
                       width: 80,
@@ -186,7 +189,7 @@ class MedicalTreatmentCenterDetailsPage extends StatelessWidget {
             SizedBox(height: 20),
           ],
         ),
-      ),
+      )),
     );
   }
 }
