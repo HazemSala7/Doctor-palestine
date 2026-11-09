@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
@@ -97,9 +98,9 @@ class RadiologyCenterDetailsPage extends StatelessWidget {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 6),
-                        Text("📍 ${radiologyCenter.address}"),
-                        Text("🏙 المدينة: ${radiologyCenter.cityName}"),
-                        Text("💼 الخبرة: ${radiologyCenter.experiance} سنة"),
+                        EmojiText("📍 ${radiologyCenter.address}"),
+                        EmojiText("🏙 المدينة: ${radiologyCenter.cityName}"),
+                        EmojiText("💼 الخبرة: ${radiologyCenter.experiance} سنة"),
                       ],
                     ),
                   ),

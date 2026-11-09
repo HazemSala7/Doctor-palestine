@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
@@ -100,9 +101,9 @@ class OpticDetailsPage extends StatelessWidget {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 6),
-                        Text("📍 ${opticCenter.address}"),
-                        Text("🏙 المدينة: ${opticCenter.cityName}"),
-                        Text("💼 الخبرة: ${opticCenter.experiance} سنة"),
+                        EmojiText("📍 ${opticCenter.address}"),
+                        EmojiText("🏙 المدينة: ${opticCenter.cityName}"),
+                        EmojiText("💼 الخبرة: ${opticCenter.experiance} سنة"),
                       ],
                     ),
                   ),

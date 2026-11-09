@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
@@ -100,9 +101,9 @@ class LaboratoryDetailsPage extends StatelessWidget {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 6),
-                        Text("📍 ${laboratory.address}"),
-                        Text("🏙 المدينة: ${laboratory.cityName}"),
-                        Text("💼 الخبرة: ${laboratory.experiance} سنة"),
+                        EmojiText("📍 ${laboratory.address}"),
+                        EmojiText("🏙 المدينة: ${laboratory.cityName}"),
+                        EmojiText("💼 الخبرة: ${laboratory.experiance} سنة"),
                       ],
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -56,7 +57,7 @@ void toggleFavorite(BuildContext context, Place place) {
       color: place.kind.name,
     ));
     messenger.showSnackBar(
-        SnackBar(content: Text('أُضيف ${place.name} إلى المفضلة ❤')));
+        SnackBar(content: EmojiText('أُضيف ${place.name} إلى المفضلة ❤')));
   }
 }
 
@@ -201,7 +202,7 @@ class PlaceAvatar extends StatelessWidget {
                         fontSize: size * 0.3,
                       ),
                     )
-                  : Text(place.kind.emoji,
+                  : EmojiText(place.kind.emoji,
                       style: TextStyle(fontSize: size * 0.45)),
             ),
     );
@@ -351,7 +352,7 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           if (emoji != null) ...[
-            Text(emoji!, style: const TextStyle(fontSize: 20)),
+            EmojiText(emoji!, style: const TextStyle(fontSize: 20)),
             const SizedBox(width: 8),
           ],
           Expanded(
@@ -448,7 +449,7 @@ class ChoiceChipsRow<T> extends StatelessWidget {
                       ]
                     : null,
               ),
-              child: Text(
+              child: EmojiText(
                 '${emoji == null ? '' : '${emoji!(v)} '}${label(v)}',
                 style: TextStyle(
                   color: active ? Colors.white : kBrandText,

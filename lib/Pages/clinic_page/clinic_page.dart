@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
@@ -208,7 +209,7 @@ class DoctorDetailsPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         children: [
-          Text("$label: ", style: TextStyle(fontWeight: FontWeight.w600)),
+          EmojiText("$label: ", style: TextStyle(fontWeight: FontWeight.w600)),
           Expanded(
             child: isPhone
                 ? InkWell(

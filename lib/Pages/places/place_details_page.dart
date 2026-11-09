@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/animations/effects.dart';
 import 'package:clinic_dr_alla/Components/ui_kit.dart';
@@ -299,7 +300,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                           border:
                               Border.all(color: color.withValues(alpha: 0.15)),
                         ),
-                        child: Text('✓ $t',
+                        child: EmojiText('✓ $t',
                             style: TextStyle(
                                 color: color,
                                 fontWeight: FontWeight.w700,
@@ -383,7 +384,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                         child: FloatingWidget(
                           distance: 10,
                           period: Duration(milliseconds: 1200),
-                          child: Text('📍', style: TextStyle(fontSize: 44)),
+                          child: EmojiText('📍', style: TextStyle(fontSize: 44)),
                         ),
                       ),
                       PositionedDirectional(
@@ -444,7 +445,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
         ),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 22)),
+            EmojiText(emoji, style: const TextStyle(fontSize: 22)),
             const SizedBox(height: 4),
             CountUp(
               value: value,
@@ -480,7 +481,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              Text(emoji, style: const TextStyle(fontSize: 18)),
+              EmojiText(emoji, style: const TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Text(title,
                   style: const TextStyle(

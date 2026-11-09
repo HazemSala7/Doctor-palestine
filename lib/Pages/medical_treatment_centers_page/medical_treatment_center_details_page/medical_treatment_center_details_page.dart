@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
@@ -99,9 +100,9 @@ class MedicalTreatmentCenterDetailsPage extends StatelessWidget {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 6),
-                        Text("📍 ${medicalTreatmentCenter.address}"),
-                        Text("🏙 المدينة: ${medicalTreatmentCenter.cityName}"),
-                        Text(
+                        EmojiText("📍 ${medicalTreatmentCenter.address}"),
+                        EmojiText("🏙 المدينة: ${medicalTreatmentCenter.cityName}"),
+                        EmojiText(
                             "💼 الخبرة: ${medicalTreatmentCenter.experiance} سنة"),
                       ],
                     ),

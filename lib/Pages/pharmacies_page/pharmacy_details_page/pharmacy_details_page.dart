@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
@@ -100,9 +101,9 @@ class PharmacyDetailsPage extends StatelessWidget {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 6),
-                        Text("📍 ${pharmacy.address}"),
-                        Text("🏙 المدينة: ${pharmacy.cityName}"),
-                        Text("💼 الخبرة: ${pharmacy.experiance} سنة"),
+                        EmojiText("📍 ${pharmacy.address}"),
+                        EmojiText("🏙 المدينة: ${pharmacy.cityName}"),
+                        EmojiText("💼 الخبرة: ${pharmacy.experiance} سنة"),
                       ],
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
@@ -307,9 +308,9 @@ class _ClinicsHomePageState extends State<ClinicsHomePage> {
                                                   style: TextStyle(
                                                       color: Colors.grey[600])),
                                               SizedBox(height: 4),
-                                              Text(
+                                              EmojiText(
                                                   "🏙 المدينة: ${clinic.cityName}"),
-                                              Text(
+                                              EmojiText(
                                                   "🩺 التخصص: ${clinic.categoryName}"),
                                               SizedBox(height: 6),
                                               Text(

@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'dart:async';
 
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
@@ -210,7 +211,7 @@ class _MainScreenState extends State<MainScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(_greeting,
+                              EmojiText(_greeting,
                                   style: TextStyle(
                                       color:
                                           Colors.white.withValues(alpha: 0.85),
@@ -228,7 +229,7 @@ class _MainScreenState extends State<MainScreen>
                       GlassButton(
                         onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('لا توجد إشعارات جديدة 🔔'))),
+                                content: EmojiText('لا توجد إشعارات جديدة 🔔'))),
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -334,7 +335,7 @@ class _MainScreenState extends State<MainScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(emoji, style: const TextStyle(fontSize: 14)),
+                  EmojiText(emoji, style: const TextStyle(fontSize: 14)),
                   const SizedBox(width: 4),
                   CountUp(
                     value: value,
@@ -407,7 +408,7 @@ class _MainScreenState extends State<MainScreen>
                     _StoryRing(
                       color: s.color,
                       child:
-                          Text(s.emoji, style: const TextStyle(fontSize: 28)),
+                          EmojiText(s.emoji, style: const TextStyle(fontSize: 28)),
                     ),
                     const SizedBox(height: 6),
                     Text(s.name,
@@ -471,7 +472,7 @@ class _MainScreenState extends State<MainScreen>
                         padding: const EdgeInsets.all(14),
                         child: s.asset != null
                             ? Image.asset(s.asset!, fit: BoxFit.contain)
-                            : Text(s.emoji,
+                            : EmojiText(s.emoji,
                                 style: const TextStyle(fontSize: 30)),
                       ),
                     ),
@@ -549,7 +550,7 @@ class _MainScreenState extends State<MainScreen>
                   children: [
                     const HeartbeatPulse(
                       strength: 0.12,
-                      child: Text('🚑', style: TextStyle(fontSize: 44)),
+                      child: EmojiText('🚑', style: TextStyle(fontSize: 44)),
                     ),
                     const SizedBox(width: 14),
                     const Expanded(
@@ -670,7 +671,7 @@ class _MainScreenState extends State<MainScreen>
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w800,
                                       color: kBrandText)),
-                              Text('📍 ${p.city}',
+                              EmojiText('📍 ${p.city}',
                                   style: const TextStyle(
                                       color: kBrandMuted, fontSize: 12)),
                               const SizedBox(height: 6),
@@ -752,7 +753,7 @@ class _MainScreenState extends State<MainScreen>
         children: [
           Opacity(opacity: 0.6, child: Image.asset(kLogoAsset, height: 48)),
           const SizedBox(height: 6),
-          const Text('صُنع بحب في فلسطين 🇵🇸',
+          const EmojiText('صُنع بحب في فلسطين 🇵🇸',
               style:
                   TextStyle(color: kBrandMuted, fontWeight: FontWeight.w600)),
           if (kUseDemoData)
@@ -961,7 +962,7 @@ class _PromoCarouselState extends State<_PromoCarousel> {
                     child: FloatingWidget(
                       distance: 8,
                       child:
-                          Text(p.emoji, style: const TextStyle(fontSize: 70)),
+                          EmojiText(p.emoji, style: const TextStyle(fontSize: 70)),
                     ),
                   ),
                 ),

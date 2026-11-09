@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
@@ -97,9 +98,9 @@ class BeautyCenterDetailsPage extends StatelessWidget {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 6),
-                        Text("📍 ${beautyCenter.address}"),
-                        Text("🏙 المدينة: ${beautyCenter.cityName}"),
-                        Text("💼 الخبرة: ${beautyCenter.experiance} سنة"),
+                        EmojiText("📍 ${beautyCenter.address}"),
+                        EmojiText("🏙 المدينة: ${beautyCenter.cityName}"),
+                        EmojiText("💼 الخبرة: ${beautyCenter.experiance} سنة"),
                       ],
                     ),
                   ),

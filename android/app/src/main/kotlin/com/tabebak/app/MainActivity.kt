@@ -1,4 +1,4 @@
-package doctor.ps.clinics
+package com.tabebak.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,7 @@ class EmptyState extends StatelessWidget {
                     color: kBrandText),
               ),
               const SizedBox(height: 6),
-              Text(
+              EmojiText(
                 subtitle,
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: kBrandMuted, fontSize: 14),

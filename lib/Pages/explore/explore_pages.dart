@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/animations/effects.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
@@ -37,7 +38,7 @@ class _ExploreHeader extends StatelessWidget {
               top: topInset + 4,
               child: FloatingWidget(
                 distance: 8,
-                child: Text(emoji, style: const TextStyle(fontSize: 58)),
+                child: EmojiText(emoji, style: const TextStyle(fontSize: 58)),
               ),
             ),
             Padding(
@@ -174,7 +175,7 @@ class _CityCard extends StatelessWidget {
                 child: FloatingWidget(
                   distance: 5,
                   period: Duration(milliseconds: 2000 + city.id * 200),
-                  child: Text(city.emoji, style: const TextStyle(fontSize: 46)),
+                  child: EmojiText(city.emoji, style: const TextStyle(fontSize: 46)),
                 ),
               ),
               Padding(
@@ -288,7 +289,7 @@ class _SpecialtyTile extends StatelessWidget {
                   s.color.withValues(alpha: 0.06),
                 ]),
               ),
-              child: Text(s.emoji, style: const TextStyle(fontSize: 30)),
+              child: EmojiText(s.emoji, style: const TextStyle(fontSize: 30)),
             ),
             const SizedBox(height: 8),
             Text(s.name,
@@ -424,7 +425,7 @@ class _JobCard extends StatelessWidget {
                   const Color(0xFFFFB74D).withValues(alpha: 0.12),
                 ]),
               ),
-              child: Text(job.emoji, style: const TextStyle(fontSize: 30)),
+              child: EmojiText(job.emoji, style: const TextStyle(fontSize: 30)),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -481,7 +482,7 @@ class _JobCard extends StatelessWidget {
           color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(text,
+        child: EmojiText(text,
             style: TextStyle(
                 color: color, fontSize: 11.5, fontWeight: FontWeight.w700)),
       );
@@ -515,7 +516,7 @@ class _JobCard extends StatelessWidget {
             const SizedBox(height: 18),
             Row(
               children: [
-                Text(job.emoji, style: const TextStyle(fontSize: 40)),
+                EmojiText(job.emoji, style: const TextStyle(fontSize: 40)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

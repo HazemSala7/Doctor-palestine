@@ -11,11 +11,11 @@ import 'package:http/http.dart' as http;
 class JobsHomePage extends StatefulWidget {
   final void Function(int) changeTabIndex;
   final Function(String) onLanguageSelected;
-  @override
   const JobsHomePage({
     required this.changeTabIndex,
     required this.onLanguageSelected,
   });
+  @override
   _JobsHomePageState createState() => _JobsHomePageState();
 }
 

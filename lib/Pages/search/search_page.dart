@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'dart:async';
 
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
@@ -133,7 +134,7 @@ class _SearchPageState extends State<SearchPage> {
       key: const ValueKey('idle'),
       padding: const EdgeInsets.all(20),
       children: [
-        const Text('عمليات بحث شائعة 🔥',
+        const EmojiText('عمليات بحث شائعة 🔥',
             style: TextStyle(
                 fontWeight: FontWeight.w800, fontSize: 16, color: kBrandText)),
         const SizedBox(height: 12),
@@ -191,7 +192,7 @@ class _SearchPageState extends State<SearchPage> {
                           gradient: PlaceKind.values[i].gradient,
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        child: Text(PlaceKind.values[i].emoji,
+                        child: EmojiText(PlaceKind.values[i].emoji,
                             style: const TextStyle(fontSize: 26)),
                       ),
                       const SizedBox(height: 6),
@@ -242,7 +243,7 @@ class _SearchPageState extends State<SearchPage> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
             child: Row(
               children: [
-                Text('${e.key.emoji}  ${e.key.plural}',
+                EmojiText('${e.key.emoji}  ${e.key.plural}',
                     style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 16,

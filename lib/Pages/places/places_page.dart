@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'dart:async';
 
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
@@ -118,7 +119,7 @@ class _PlacesPageState extends State<PlacesPage> {
                 distance: 10,
                 child: Opacity(
                   opacity: 0.9,
-                  child: Text(kind.emoji, style: const TextStyle(fontSize: 86)),
+                  child: EmojiText(kind.emoji, style: const TextStyle(fontSize: 86)),
                 ),
               ),
             ),

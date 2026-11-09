@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:clinic_dr_alla/Components/custom_app_bar/custom_app_bar.dart';
 import 'package:clinic_dr_alla/Pages/beauty_centers_page/beauty_center_details_page/beauty_center_details_page.dart';
 import 'package:clinic_dr_alla/model/beauty_center_model.dart';
-import 'package:clinic_dr_alla/model/hospital_model.dart';
 import 'package:clinic_dr_alla/services/apis.dart';
 import 'package:clinic_dr_alla/services/functions.dart';
 import 'package:flutter/material.dart';

@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'dart:io';
 
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
@@ -141,7 +142,7 @@ class Profile extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.only(top: 18),
               child: Center(
-                child: Text('🧪 التطبيق يعمل حالياً على بيانات تجريبية',
+                child: EmojiText('🧪 التطبيق يعمل حالياً على بيانات تجريبية',
                     style: TextStyle(
                         color: Color(0xFFEF6C00),
                         fontWeight: FontWeight.w700,
@@ -233,7 +234,7 @@ class _Tile extends StatelessWidget {
                 color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Text(emoji, style: const TextStyle(fontSize: 20)),
+              child: EmojiText(emoji, style: const TextStyle(fontSize: 20)),
             ),
             const SizedBox(width: 12),
             Expanded(

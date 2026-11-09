@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 
 // Brand palette sampled from the Tabebak (طبيبك) logo.
 const Color kBrandDark = Color(0xFF0A3D91);

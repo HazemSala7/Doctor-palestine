@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/animations/effects.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
@@ -59,7 +60,7 @@ class FavoritesPage extends StatelessWidget {
                       top: topInset + 10,
                       child: const HeartbeatPulse(
                         strength: 0.1,
-                        child: Text('💖', style: TextStyle(fontSize: 76)),
+                        child: EmojiText('💖', style: TextStyle(fontSize: 76)),
                       ),
                     ),
                     Padding(
