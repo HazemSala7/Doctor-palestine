@@ -1,43 +1,19 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+# Not part of this repository: an older app with its own repo, its old backend, and a build output.
+/clinics/
+/clinics_backend/
+/tabebak_admin_dist/
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
+# Laravel runtime files: sessions, logs and caches can hold private data.
+/tabebak_backend/storage/framework/cache/data/
+/tabebak_backend/storage/framework/sessions/*
+/tabebak_backend/storage/framework/testing/*
+/tabebak_backend/storage/framework/views/*
+/tabebak_backend/storage/logs/*
+!/tabebak_backend/storage/framework/sessions/.gitignore
+!/tabebak_backend/storage/framework/testing/.gitignore
+!/tabebak_backend/storage/framework/views/.gitignore
+!/tabebak_backend/storage/logs/.gitignore
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Editor settings and Windows clutter.
+.vscode/
+Thumbs.db
