@@ -251,7 +251,8 @@ class ReviewsTest extends TestCase
     {
         $first = $this->review()->assertCreated()->json('review.author');
         $other = $this->review(['phone' => '0598 111 222'], 'lab/3')->assertCreated()->json('review.author');
-        $again = $this->review(['comment' => 'تعديل'])->assertCreated()->json('review.author');
+        // The same phone on the same place edits its review (200), it doesn't add one.
+        $again = $this->review(['comment' => 'تعديل'])->assertOk()->json('review.author');
 
         $this->assertMatchesRegularExpression('/^[0-9a-f]{16}$/', $first);
         $this->assertSame($first, $again, 'the same phone keeps the same key');
