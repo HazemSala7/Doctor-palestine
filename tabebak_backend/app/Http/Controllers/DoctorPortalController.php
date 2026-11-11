@@ -8,6 +8,7 @@ use App\Services\Reviews;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 /** The signed-in doctor's side of the app: bookings, schedule and patients' reviews. */
@@ -208,14 +209,17 @@ class DoctorPortalController extends Controller
 
     /**
      * POST doctor/account/delete {password}
-     * Deletes the login and what the doctor added (reels and team). The
-     * directory listing stays: the admin team created it, not the doctor.
+     * The doctor deletes their own account: sign-in, number, password and
+     * schedule go, and every token stops working. Bookings still to come are
+     * cancelled so patients see it, and the reels and team the doctor added
+     * are deleted with their files. The doctor's page in the directory and
+     * past appointments stay.
      */
     public function deleteAccount(Request $request)
     {
         $account = $this->account($request);
         $request->validate(['password' => ['required', 'string']], [
-            'password.required' => 'كلمة المرور مطلوبة',
+            'password.required' => 'اكتب كلمة المرور لتأكيد الحذف',
         ]);
         if (! Hash::check($request->input('password'), $account->password)) {
             return $this->json([
@@ -224,18 +228,30 @@ class DoctorPortalController extends Controller
             ], 422);
         }
 
-        $reels = DB::table('reels')->where('doctor_id', $account->doctor_id);
-        $team = DB::table('staff_members')->where('type', 'doctor')->where('target_id', $account->doctor_id);
-        $files = [
-            ...(clone $reels)->pluck('video'),
-            ...(clone $reels)->pluck('thumbnail'),
-            ...(clone $team)->pluck('image'),
-        ];
+        // What the doctor added, with the columns that hold uploaded files.
+        $added = array_filter([
+            'reels' => [DB::table('reels')->where('doctor_id', $account->doctor_id), ['video', 'thumbnail']],
+            'staff_members' => [DB::table('staff_members')->where('type', 'doctor')->where('target_id', $account->doctor_id), ['image']],
+        ], fn ($table) => Schema::hasTable($table), ARRAY_FILTER_USE_KEY);
+        $files = [];
+        foreach ($added as [$query, $columns]) {
+            foreach ($columns as $column) {
+                array_push($files, ...(clone $query)->pluck($column));
+            }
+        }
 
-        DB::transaction(function () use ($account, $reels, $team) {
-            $reels->delete();
-            $team->delete();
+        $cancelled = DB::transaction(function () use ($account, $added) {
+            $cancelled = DB::table('doctor_appointments')
+                ->where('doctor_id', $account->doctor_id)
+                ->where('date', '>=', Booking::today())
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->update(['status' => 'cancelled', 'updated_at' => now()]);
+            foreach ($added as [$query]) {
+                $query->delete();
+            }
             DB::table('doctor_accounts')->where('id', $account->id)->delete();
+
+            return $cancelled;
         });
 
         // Uploaded files only; external links (http...) are not ours to delete.
@@ -246,7 +262,7 @@ class DoctorPortalController extends Controller
             }
         }
 
-        return $this->json(['message' => 'تم حذف الحساب']);
+        return $this->json(['deleted' => true, 'cancelled_appointments' => $cancelled]);
     }
 
     private function account(Request $request)

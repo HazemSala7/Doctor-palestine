@@ -1,4 +1,3 @@
-import 'package:clinic_dr_alla/Pages/doctor_portal/delete_account_dialog.dart';
 import 'dart:async';
 
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
@@ -15,6 +14,120 @@ import 'package:clinic_dr_alla/Pages/doctor_portal/doctor_reviews_page.dart';
 import 'package:clinic_dr_alla/Pages/doctor_portal/doctor_schedule_page.dart';
 import 'package:clinic_dr_alla/data/booking.dart';
 import 'package:flutter/material.dart';
+
+/// Confirms with the password before the doctor's account is deleted.
+/// Pops with the number of cancelled bookings once it's gone.
+class DeleteAccountDialog extends StatefulWidget {
+  const DeleteAccountDialog({super.key});
+
+  @override
+  State<DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
+  final _password = TextEditingController();
+  String? _error;
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _delete() async {
+    if (_password.text.isEmpty) {
+      setState(() => _error = 'اكتب كلمة المرور لتأكيد الحذف');
+      return;
+    }
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final cancelled = await DoctorApi.deleteAccount(_password.text);
+      if (mounted) Navigator.pop(context, cancelled);
+    } on ApiException catch (e) {
+      if (mounted)
+        setState(() => _error = e.fieldErrors['password'] ?? e.message);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget point(String emoji, String text) => Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 14)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(text,
+                    style: const TextStyle(
+                        color: kBrandText, fontSize: 13.5, height: 1.5)),
+              ),
+            ],
+          ),
+        );
+
+    return AlertDialog(
+      title: const Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: kCancelledColor),
+          SizedBox(width: 8),
+          Expanded(child: Text('حذف حسابي نهائياً')),
+        ],
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            point('🗑️',
+                'يُحذف حسابك: رقم الدخول وكلمة المرور وإعدادات المواعيد.'),
+            point('⛔', 'يتوقف استقبال الحجوزات عبر التطبيق.'),
+            point('🎬', 'تُحذف الفيديوهات وفريق العمل الذي أضفته إلى صفحتك.'),
+            point('📅', 'تُلغى الحجوزات القادمة، ويرى المرضى أنها أُلغيت.'),
+            point('ℹ️',
+                'تبقى صفحتك في دليل الأطباء. لحذفها أيضاً تواصل معنا عبر الدعم.'),
+            const SizedBox(height: 4),
+            const Text('لا يمكن التراجع عن هذا.',
+                style: TextStyle(
+                    color: kCancelledColor, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _password,
+              obscureText: true,
+              enabled: !_busy,
+              onSubmitted: (_) => _delete(),
+              decoration: fieldDecoration('كلمة المرور للتأكيد', error: _error),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _busy ? null : () => Navigator.pop(context),
+          child: const Text('تراجع'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: kCancelledColor),
+          onPressed: _busy ? null : _delete,
+          child: _busy
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2.4, color: Colors.white))
+              : const Text('احذف حسابي'),
+        ),
+      ],
+    );
+  }
+}
 
 enum _Scope {
   upcoming('القادمة'),
@@ -145,38 +258,38 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage>
   }
 
   Future<void> _logout() async {
-    final choice = await showDialog<String>(
+    final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('تسجيل الخروج؟'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(c, 'delete'),
-              style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
-              child: const Text('حذف الحساب')),
-          TextButton(
-              onPressed: () => Navigator.pop(c),
+              onPressed: () => Navigator.pop(c, false),
               child: const Text('تراجع')),
           TextButton(
-              onPressed: () => Navigator.pop(c, 'logout'),
+              onPressed: () => Navigator.pop(c, true),
               child: const Text('خروج')),
         ],
       ),
     );
-    if (!mounted) return;
-    if (choice == 'delete') return _deleteAccount();
-    if (choice != 'logout') return;
+    if (ok != true) return;
     await DoctorApi.logout();
     if (mounted) Navigator.pop(context);
   }
 
+  /// Asks for the password, says plainly what goes and what stays, then
+  /// deletes the account and leaves the portal.
   Future<void> _deleteAccount() async {
-    final deleted = await showDialog<bool>(
+    final cancelled = await showDialog<int>(
       context: context,
       builder: (_) => const DeleteAccountDialog(),
     );
-    if (deleted != true || !mounted) return;
-    showMessage(context, 'تم حذف الحساب');
+    if (cancelled == null || !mounted) return;
+    showMessage(
+        context,
+        cancelled > 0
+            ? 'تم حذف حسابك، وأُلغي $cancelled من الحجوزات القادمة'
+            : 'تم حذف حسابك');
     Navigator.pop(context);
   }
 
@@ -248,7 +361,8 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage>
                 child: EmptyState(title: 'تعذّر التحميل', subtitle: _error!),
               )
             else if (items == null)
-              const SliverFillRemaining(hasScrollBody: false, child: AppLoader())
+              const SliverFillRemaining(
+                  hasScrollBody: false, child: AppLoader())
             else if (items.isEmpty)
               SliverFillRemaining(
                 hasScrollBody: false,
@@ -356,6 +470,40 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage>
             children: [
               tile('الريلز', 'إضافة الفيديوهات وتعديلها وإخفاؤها وحذفها',
                   Icons.smart_display_rounded, const DoctorReelsPage()),
+              const SizedBox(width: 10),
+              Expanded(
+                child: PressableScale(
+                  pressedScale: 0.97,
+                  onTap: _deleteAccount,
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: kCancelledColor.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                          color: kCancelledColor.withValues(alpha: 0.25)),
+                    ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.person_remove_rounded,
+                            color: kCancelledColor, size: 26),
+                        SizedBox(height: 8),
+                        Text('حذف حسابي',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: kCancelledColor)),
+                        Text('حذف حساب الطبيب نهائياً من التطبيق',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: kBrandMuted, fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -496,9 +644,9 @@ class _DoctorAppointmentCard extends StatelessWidget {
               width: 76,
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.08),
-                borderRadius:
-                    const BorderRadiusDirectional.horizontal(start: Radius.circular(24))
-                        .resolve(Directionality.of(context)),
+                borderRadius: const BorderRadiusDirectional.horizontal(
+                        start: Radius.circular(24))
+                    .resolve(Directionality.of(context)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -509,8 +657,8 @@ class _DoctorAppointmentCard extends StatelessWidget {
                           fontSize: 19,
                           fontWeight: FontWeight.w900)),
                   Text(parts[1],
-                      style: TextStyle(
-                          color: color, fontWeight: FontWeight.w700)),
+                      style:
+                          TextStyle(color: color, fontWeight: FontWeight.w700)),
                 ],
               ),
             ),
@@ -544,7 +692,9 @@ class _DoctorAppointmentCard extends StatelessWidget {
                         _IconAction(Icons.call_rounded, kBrandSuccess,
                             () => callNumber(a.patientPhone)),
                         const SizedBox(width: 6),
-                        _IconAction(Icons.chat_rounded, const Color(0xFF25D366),
+                        _IconAction(
+                            Icons.chat_rounded,
+                            const Color(0xFF25D366),
                             () => openWhatsApp(a.patientPhone,
                                 'مرحباً ${a.patientName}، بخصوص موعدك يوم ${formatDay(a.date)} الساعة ${formatTime(a.time)}')),
                       ],
@@ -575,14 +725,23 @@ class _DoctorAppointmentCard extends StatelessWidget {
                           : Row(
                               children: [
                                 if (a.status == AppointmentStatus.pending)
-                                  _action('تأكيد', Icons.check_rounded,
-                                      kBrandSuccess, AppointmentStatus.confirmed)
+                                  _action(
+                                      'تأكيد',
+                                      Icons.check_rounded,
+                                      kBrandSuccess,
+                                      AppointmentStatus.confirmed)
                                 else
-                                  _action('تمت الزيارة', Icons.done_all_rounded,
-                                      kBrandPrimary, AppointmentStatus.completed),
+                                  _action(
+                                      'تمت الزيارة',
+                                      Icons.done_all_rounded,
+                                      kBrandPrimary,
+                                      AppointmentStatus.completed),
                                 const SizedBox(width: 8),
-                                _action('إلغاء', Icons.close_rounded,
-                                    kCancelledColor, AppointmentStatus.cancelled),
+                                _action(
+                                    'إلغاء',
+                                    Icons.close_rounded,
+                                    kCancelledColor,
+                                    AppointmentStatus.cancelled),
                               ],
                             ),
                     ],
@@ -596,7 +755,8 @@ class _DoctorAppointmentCard extends StatelessWidget {
     );
   }
 
-  Widget _action(String label, IconData icon, Color color, AppointmentStatus to) =>
+  Widget _action(
+          String label, IconData icon, Color color, AppointmentStatus to) =>
       Expanded(
         child: PressableScale(
           onTap: () => onStatus(to),
@@ -613,7 +773,9 @@ class _DoctorAppointmentCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(label,
                     style: TextStyle(
-                        color: color, fontWeight: FontWeight.w800, fontSize: 13)),
+                        color: color,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13)),
               ],
             ),
           ),
