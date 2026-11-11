@@ -8,6 +8,7 @@ use App\Services\Reviews;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 /** The signed-in doctor's side of the app: bookings, schedule and patients' reviews. */
 class DoctorPortalController extends Controller
@@ -203,6 +204,49 @@ class DoctorPortalController extends Controller
         $fresh = DB::table('doctor_accounts')->where('id', $account->id)->first();
 
         return $this->json(['token' => DoctorToken::issue($fresh)]);
+    }
+
+    /**
+     * POST doctor/account/delete {password}
+     * Deletes the login and what the doctor added (reels and team). The
+     * directory listing stays: the admin team created it, not the doctor.
+     */
+    public function deleteAccount(Request $request)
+    {
+        $account = $this->account($request);
+        $request->validate(['password' => ['required', 'string']], [
+            'password.required' => 'كلمة المرور مطلوبة',
+        ]);
+        if (! Hash::check($request->input('password'), $account->password)) {
+            return $this->json([
+                'message' => 'كلمة المرور غير صحيحة',
+                'errors' => ['password' => ['كلمة المرور غير صحيحة']],
+            ], 422);
+        }
+
+        $reels = DB::table('reels')->where('doctor_id', $account->doctor_id);
+        $team = DB::table('staff_members')->where('type', 'doctor')->where('target_id', $account->doctor_id);
+        $files = [
+            ...(clone $reels)->pluck('video'),
+            ...(clone $reels)->pluck('thumbnail'),
+            ...(clone $team)->pluck('image'),
+        ];
+
+        DB::transaction(function () use ($account, $reels, $team) {
+            $reels->delete();
+            $team->delete();
+            DB::table('doctor_accounts')->where('id', $account->id)->delete();
+        });
+
+        // Uploaded files only; external links (http...) are not ours to delete.
+        $disk = Storage::disk(config('voyager.storage.disk', 'public'));
+        foreach (array_filter($files) as $path) {
+            if (! preg_match('#^https?:#', $path)) {
+                $disk->delete($path);
+            }
+        }
+
+        return $this->json(['message' => 'تم حذف الحساب']);
     }
 
     private function account(Request $request)

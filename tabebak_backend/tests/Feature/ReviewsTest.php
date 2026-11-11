@@ -246,4 +246,16 @@ class ReviewsTest extends TestCase
         $this->assertTrue($edited['verified']);
         $this->postJson("/api/doctor/reviews/{$review['id']}/reply", ['reply' => ''], $auth)->assertOk()->assertJson(['reply' => null]);
     }
+
+    public function test_author_key_lets_the_app_block_a_reviewer_without_the_phone()
+    {
+        $first = $this->review()->assertCreated()->json('review.author');
+        $other = $this->review(['phone' => '0598 111 222'], 'lab/3')->assertCreated()->json('review.author');
+        $again = $this->review(['comment' => 'تعديل'])->assertCreated()->json('review.author');
+
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{16}$/', $first);
+        $this->assertSame($first, $again, 'the same phone keeps the same key');
+        $this->assertNotSame($first, $other);
+        $this->assertStringNotContainsString('0599', $first);
+    }
 }

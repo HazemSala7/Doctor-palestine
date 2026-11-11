@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Review {
   final int id;
   final String name;
+
+  /// Anonymous key for the reviewer (not their phone), used for blocking.
+  final String? author;
   final int rating;
   final String? comment;
 
@@ -20,6 +23,7 @@ class Review {
   const Review({
     required this.id,
     required this.name,
+    this.author,
     required this.rating,
     this.comment,
     this.verified = false,
@@ -31,6 +35,7 @@ class Review {
   factory Review.fromJson(Map<String, dynamic> j) => Review(
         id: j['id'] ?? 0,
         name: j['name'] ?? '',
+        author: j['author'],
         rating: int.tryParse('${j['rating']}') ?? 0,
         comment: (j['comment'] as String?)?.trim().isEmpty ?? true
             ? null
@@ -42,6 +47,9 @@ class Review {
         repliedAt: parseServerTime(j['replied_at']),
         createdAt: parseServerTime(j['created_at']),
       );
+
+  /// Key in [Blocks] that hides this reviewer.
+  String get blockKey => author != null ? 'review:$author' : 'review-id:$id';
 }
 
 class ReviewSummary {

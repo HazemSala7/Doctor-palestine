@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/data/blocks.dart';
 import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'dart:math' as math;
 import 'dart:ui';
@@ -50,6 +51,55 @@ Future<void> reportContent(BuildContext context, String what) async {
   if (ok == true) {
     await openWhatsApp(Repository.config.supportWhatsApp,
         'مرحباً، أود الإبلاغ عن محتوى مخالف في تطبيق طبيبك:\n$what\nالسبب: ');
+  }
+}
+
+/// The flag button on a reel or review: report it, or block whoever posted it
+/// ([blockKey] in [Blocks], [blockLabel] e.g. 'حظر هذا المستخدم').
+Future<void> showContentActions(BuildContext context,
+    {required String what,
+    required String blockKey,
+    required String blockLabel}) async {
+  final choice = await showModalBottomSheet<String>(
+    context: context,
+    useRootNavigator: true,
+    builder: (c) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.outlined_flag_rounded),
+            title: const Text('الإبلاغ عن المحتوى'),
+            onTap: () => Navigator.pop(c, 'report'),
+          ),
+          ListTile(
+            leading: Icon(Icons.block_rounded, color: Colors.red.shade700),
+            title: Text(blockLabel, style: TextStyle(color: Colors.red.shade700)),
+            subtitle: const Text('لن يظهر لك محتواه بعد الآن'),
+            onTap: () => Navigator.pop(c, 'block'),
+          ),
+        ],
+      ),
+    ),
+  );
+  if (!context.mounted) return;
+  if (choice == 'report') return reportContent(context, what);
+  if (choice != 'block') return;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (c) => AlertDialog(
+      title: Text('$blockLabel؟'),
+      content: const Text('سيُخفى محتواه عنك على هذا الجهاز.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('تراجع')),
+        TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('حظر')),
+      ],
+    ),
+  );
+  if (ok != true) return;
+  await Blocks.block(blockKey);
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم الحظر')));
   }
 }
 

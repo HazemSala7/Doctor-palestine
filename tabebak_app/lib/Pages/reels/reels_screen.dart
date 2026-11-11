@@ -7,6 +7,7 @@ import 'package:clinic_dr_alla/Components/ui_kit.dart';
 import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/booking/book_appointment_page.dart';
 import 'package:clinic_dr_alla/Pages/places/place_details_page.dart';
+import 'package:clinic_dr_alla/data/blocks.dart';
 import 'package:clinic_dr_alla/data/models.dart';
 import 'package:clinic_dr_alla/data/reels.dart';
 import 'package:flutter/material.dart';
@@ -50,12 +51,22 @@ class _ReelsScreenState extends State<ReelsScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    Blocks.blocked.addListener(_onBlocked);
     _loadMore();
+  }
+
+  bool _blocked(int i) => i < _reels.length && Blocks.isBlocked(_reels[i].blockKey);
+
+  void _onBlocked() {
+    if (!mounted) return;
+    setState(() {});
+    _syncPlayback();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    Blocks.blocked.removeListener(_onBlocked);
     _viewTimer?.cancel();
     for (final c in _controllers.values) {
       c.dispose();
@@ -104,7 +115,7 @@ class _ReelsScreenState extends State<ReelsScreen> with WidgetsBindingObserver {
       setState(() {
         _page++;
         _hasMore = batch.hasMore;
-        _reels.addAll(batch.items);
+        _reels.addAll(batch.items.where((r) => !Blocks.isBlocked(r.blockKey)));
       });
       if (firstLoad && _reels.isNotEmpty) _prepareAround(0);
     } catch (e) {
@@ -158,14 +169,14 @@ class _ReelsScreenState extends State<ReelsScreen> with WidgetsBindingObserver {
     for (final entry in _controllers.entries) {
       final c = entry.value;
       if (!c.value.isInitialized) continue;
-      if (entry.key == _current && _shouldPlay) {
+      if (entry.key == _current && _shouldPlay && !_blocked(entry.key)) {
         if (!c.value.isPlaying) c.play();
       } else if (c.value.isPlaying) {
         c.pause();
       }
     }
     _viewTimer?.cancel();
-    if (_shouldPlay && _current < _reels.length) {
+    if (_shouldPlay && _current < _reels.length && !_blocked(_current)) {
       final id = _reels[_current].id;
       // Counted once per session, after two seconds of watching.
       if (!_counted.contains(id)) {
@@ -225,7 +236,9 @@ class _ReelsScreenState extends State<ReelsScreen> with WidgetsBindingObserver {
               scrollDirection: Axis.vertical,
               onPageChanged: _onPage,
               itemCount: _reels.length,
-              itemBuilder: (context, i) => _ReelView(
+              itemBuilder: (context, i) => _blocked(i)
+                  ? const _BlockedReel()
+                  : _ReelView(
                 reel: _reels[i],
                 controller: _controllers[i],
                 failed: _failed.contains(i),
@@ -322,6 +335,27 @@ class _ReelsScreenState extends State<ReelsScreen> with WidgetsBindingObserver {
       ),
     );
   }
+}
+
+/// Shown in place of a reel whose poster was blocked.
+class _BlockedReel extends StatelessWidget {
+  const _BlockedReel();
+
+  @override
+  Widget build(BuildContext context) => const ColoredBox(
+        color: Colors.black,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.block_rounded, color: Colors.white54, size: 48),
+              SizedBox(height: 12),
+              Text('حظرت هذا المحتوى',
+                  style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w700)),
+            ],
+          ),
+        ),
+      );
 }
 
 class _ReelView extends StatelessWidget {
@@ -439,7 +473,10 @@ class _ReelView extends StatelessWidget {
                 const SizedBox(height: 14),
                 _SideButton(
                   icon: Icons.outlined_flag_rounded,
-                  onTap: () => reportContent(context, 'فيديو رقم ${reel.id}: ${reel.title}'),
+                  onTap: () => showContentActions(context,
+                      what: 'فيديو رقم ${reel.id}: ${reel.title}',
+                      blockKey: reel.blockKey,
+                      blockLabel: reel.doctor != null ? 'حظر هذا الطبيب' : 'حظر هذا الفيديو'),
                 ),
                 const SizedBox(height: 14),
                 const Icon(Icons.visibility_rounded, color: Colors.white, size: 26),

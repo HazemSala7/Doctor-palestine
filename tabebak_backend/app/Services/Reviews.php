@@ -91,6 +91,8 @@ class Reviews
         return [
             'id' => (int) $r->id,
             'name' => $r->name,
+            // Lets the app block a reviewer without ever seeing their phone.
+            'author' => isset($r->phone) ? substr(hash_hmac('sha256', (string) $r->phone, 'review-author|' . config('app.key')), 0, 16) : null,
             'rating' => (int) $r->rating,
             'comment' => $r->comment,
             'verified' => (bool) $r->verified,

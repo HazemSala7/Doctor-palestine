@@ -37,6 +37,9 @@ class Reel {
             ? Place.fromApi(PlaceKind.doctor, j['doctor'])
             : null,
       );
+
+  /// Key in [Blocks]: blocking hides all of the doctor's reels.
+  String get blockKey => doctor != null ? 'doctor:${doctor!.id}' : 'reel:$id';
 }
 
 /// One page of reels from the API.

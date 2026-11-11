@@ -466,6 +466,12 @@ class DoctorApi {
         body: {'current_password': current, 'password': next});
     await _saveToken(json['token']);
   }
+
+  /// Deletes the doctor's login, reels and team on the server, then signs out.
+  static Future<void> deleteAccount(String password) async {
+    await authed('POST', 'doctor/account/delete', body: {'password': password});
+    await logout();
+  }
 }
 
 // ------------------------------------------------------------ formatting

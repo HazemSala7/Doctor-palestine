@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/data/blocks.dart';
 import 'package:clinic_dr_alla/Local/Provider/favourite_provider/favourite_provider.dart';
 import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/home_page/home_page.dart';
@@ -9,8 +10,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Blocks.load();
   // Draw behind the status and navigation bars; headers handle the insets.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

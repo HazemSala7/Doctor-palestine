@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/data/blocks.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/animations/effects.dart';
 import 'package:clinic_dr_alla/Components/ui_kit.dart';
@@ -128,6 +129,15 @@ class ReviewTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<Set<String>>(
+      valueListenable: Blocks.blocked,
+      builder: (context, blocked, _) => blocked.contains(review.blockKey)
+          ? const SizedBox.shrink()
+          : _tile(context),
+    );
+  }
+
+  Widget _tile(BuildContext context) {
     final r = review;
     final initial = r.name.trim().isEmpty ? '؟' : r.name.trim().characters.first;
     return Container(
@@ -186,7 +196,10 @@ class ReviewTile extends StatelessWidget {
               IconButton(
                 tooltip: 'إبلاغ',
                 visualDensity: VisualDensity.compact,
-                onPressed: () => reportContent(context, 'تقييم رقم ${r.id} باسم ${r.name}'),
+                onPressed: () => showContentActions(context,
+                    what: 'تقييم رقم ${r.id} باسم ${r.name}',
+                    blockKey: r.blockKey,
+                    blockLabel: 'حظر هذا المستخدم'),
                 icon: const Icon(Icons.outlined_flag_rounded, size: 19, color: kBrandMuted),
               ),
             ],

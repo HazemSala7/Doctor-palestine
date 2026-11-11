@@ -1,3 +1,4 @@
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:clinic_dr_alla/Components/emoji.dart';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/animations/effects.dart';
@@ -92,10 +93,14 @@ class Profile extends StatelessWidget {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700)),
                         const SizedBox(height: 4),
-                        Text('الإصدار 1.5.0',
-                            style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.75),
-                                fontSize: 12.5)),
+                        FutureBuilder<PackageInfo>(
+                          future: PackageInfo.fromPlatform(),
+                          builder: (context, snap) => Text(
+                              snap.hasData ? 'الإصدار ${snap.data!.version}' : '',
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontSize: 12.5)),
+                        ),
                       ],
                     ),
                   ),

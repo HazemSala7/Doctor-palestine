@@ -1,3 +1,4 @@
+import 'package:clinic_dr_alla/Pages/doctor_portal/delete_account_dialog.dart';
 import 'dart:async';
 
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
@@ -144,23 +145,39 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage>
   }
 
   Future<void> _logout() async {
-    final ok = await showDialog<bool>(
+    final choice = await showDialog<String>(
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('تسجيل الخروج؟'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(c, false),
+              onPressed: () => Navigator.pop(c, 'delete'),
+              style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
+              child: const Text('حذف الحساب')),
+          TextButton(
+              onPressed: () => Navigator.pop(c),
               child: const Text('تراجع')),
           TextButton(
-              onPressed: () => Navigator.pop(c, true),
+              onPressed: () => Navigator.pop(c, 'logout'),
               child: const Text('خروج')),
         ],
       ),
     );
-    if (ok != true) return;
+    if (!mounted) return;
+    if (choice == 'delete') return _deleteAccount();
+    if (choice != 'logout') return;
     await DoctorApi.logout();
     if (mounted) Navigator.pop(context);
+  }
+
+  Future<void> _deleteAccount() async {
+    final deleted = await showDialog<bool>(
+      context: context,
+      builder: (_) => const DeleteAccountDialog(),
+    );
+    if (deleted != true || !mounted) return;
+    showMessage(context, 'تم حذف الحساب');
+    Navigator.pop(context);
   }
 
   Future<void> _openSchedule() async {
