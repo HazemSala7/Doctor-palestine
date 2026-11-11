@@ -298,4 +298,43 @@ class BookingTest extends TestCase
         $this->getJson('/api/doctor/me', ['Authorization' => 'Bearer ' . AdminToken::issue(1)])->assertStatus(401);
         $this->getJson('/api/doctor/me')->assertStatus(401);
     }
+
+    public function test_a_doctor_deletes_their_own_account()
+    {
+        $this->createAccount();
+        $token = $this->doctorLogin();
+        $auth = ['Authorization' => "Bearer $token", 'Accept' => 'application/json'];
+
+        $upcoming = $this->book()->assertCreated()->json('id');                                      // 2026-11-08
+        $today = $this->book(['date' => '2026-11-07', 'time' => '09:00'])->assertCreated()->json('id');
+        DB::table('doctor_appointments')->insert([
+            ['doctor_id' => 6, 'code' => 'past', 'patient_name' => 'x', 'patient_phone' => '1', 'date' => '2026-11-01', 'time' => '09:00', 'status' => 'confirmed'],
+            ['doctor_id' => 6, 'code' => 'done', 'patient_name' => 'x', 'patient_phone' => '1', 'date' => '2026-11-09', 'time' => '09:00', 'status' => 'completed'],
+            ['doctor_id' => 7, 'code' => 'other', 'patient_name' => 'x', 'patient_phone' => '1', 'date' => '2026-11-08', 'time' => '09:00', 'status' => 'pending'],
+        ]);
+
+        // Needs the right password; nothing changes otherwise.
+        $this->postJson('/api/doctor/account/delete', [], $auth)->assertStatus(422)->assertJsonValidationErrors(['password']);
+        $this->postJson('/api/doctor/account/delete', ['password' => 'wrong'], $auth)->assertStatus(422)->assertJsonValidationErrors(['password']);
+        $this->assertSame(1, DB::table('doctor_accounts')->count());
+        $this->postJson('/api/doctor/account/delete', ['password' => 'secret1'])->assertStatus(401);
+
+        $this->postJson('/api/doctor/account/delete', ['password' => 'secret1'], $auth)
+            ->assertOk()->assertJson(['deleted' => true, 'cancelled_appointments' => 2]);
+
+        $this->assertSame(0, DB::table('doctor_accounts')->count());
+        $status = fn ($where) => DB::table('doctor_appointments')->where($where)->value('status');
+        $this->assertSame('cancelled', $status(['id' => $upcoming]));
+        $this->assertSame('cancelled', $status(['id' => $today]));
+        $this->assertSame('confirmed', $status(['code' => 'past']), 'history stays as it was');
+        $this->assertSame('completed', $status(['code' => 'done']));
+        $this->assertSame('pending', $status(['code' => 'other']), "another doctor's bookings are untouched");
+        $this->assertSame('د. علاء', DB::table('doctors')->where('id', 6)->value('name'), 'the directory page stays');
+
+        // Signed out everywhere, and the number no longer signs in.
+        $this->getJson('/api/doctor/me', $auth)->assertStatus(401);
+        $this->postJson('/api/doctor/login', ['phone' => '0591234567', 'password' => 'secret1'])->assertStatus(401);
+        // The doctor no longer takes bookings in the app.
+        $this->assertSame([], \App\Services\Booking::enabledDoctorIds([6]));
+    }
 }

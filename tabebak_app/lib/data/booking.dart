@@ -10,7 +10,8 @@ class ApiException implements Exception {
   final int status;
   final Map<String, String> fieldErrors;
 
-  const ApiException(this.message, [this.status = 0, this.fieldErrors = const {}]);
+  const ApiException(this.message,
+      [this.status = 0, this.fieldErrors = const {}]);
 
   bool get unauthorized => status == 401;
 
@@ -50,7 +51,8 @@ Future<dynamic> _upload(String path, Map<String, String> fields,
   http.Response res;
   try {
     for (final file in files.entries) {
-      request.files.add(await http.MultipartFile.fromPath(file.key, file.value));
+      request.files
+          .add(await http.MultipartFile.fromPath(file.key, file.value));
     }
     res = await http.Response.fromStream(await request.send().timeout(timeout));
   } catch (_) {
@@ -68,7 +70,8 @@ dynamic _decode(http.Response res) {
   }
   if (res.statusCode >= 200 && res.statusCode < 300) return json;
   if (res.statusCode == 413) {
-    throw const ApiException('الملف أكبر مما يقبله السيرفر، جرّب ملفاً أصغر', 413);
+    throw const ApiException(
+        'الملف أكبر مما يقبله السيرفر، جرّب ملفاً أصغر', 413);
   }
 
   final errors = <String, String>{};
@@ -301,9 +304,11 @@ class AppointmentSummary {
 class BookingApi {
   BookingApi._();
 
-  static Future<Availability> availability(int doctorId, [DateTime? date]) async {
+  static Future<Availability> availability(int doctorId,
+      [DateTime? date]) async {
     final q = date == null ? '' : '?date=${_ymd(date)}';
-    return Availability.fromJson(await _send('GET', 'doctors/$doctorId/booking$q'));
+    return Availability.fromJson(
+        await _send('GET', 'doctors/$doctorId/booking$q'));
   }
 
   static Future<Appointment> book({
@@ -328,11 +333,12 @@ class BookingApi {
   }
 
   static Future<Appointment> fetch(String code) async =>
-      Appointment.fromJson(await _send('GET', 'appointments/$code'), code: code);
+      Appointment.fromJson(await _send('GET', 'appointments/$code'),
+          code: code);
 
-  static Future<Appointment> cancel(String code) async => Appointment.fromJson(
-      await _send('POST', 'appointments/$code/cancel'),
-      code: code);
+  static Future<Appointment> cancel(String code) async =>
+      Appointment.fromJson(await _send('POST', 'appointments/$code/cancel'),
+          code: code);
 }
 
 /// Bookings made from this phone. Patients have no account, so the secret
@@ -350,7 +356,8 @@ class MyBookings {
   static Future<void> add(String code) async {
     final prefs = await SharedPreferences.getInstance();
     final list = prefs.getStringList(_codesKey) ?? [];
-    await prefs.setStringList(_codesKey, [code, ...list.where((c) => c != code)]);
+    await prefs
+        .setStringList(_codesKey, [code, ...list.where((c) => c != code)]);
   }
 
   static Future<void> remove(String code) async {
@@ -449,12 +456,15 @@ class DoctorApi {
     final s = json['summary'] ?? {};
     return (
       [for (final a in json['data'] as List) Appointment.fromJson(a)],
-      AppointmentSummary(s['today'] ?? 0, s['pending'] ?? 0, s['confirmed'] ?? 0),
+      AppointmentSummary(
+          s['today'] ?? 0, s['pending'] ?? 0, s['confirmed'] ?? 0),
     );
   }
 
-  static Future<Appointment> setStatus(int id, AppointmentStatus status) async =>
-      Appointment.fromJson(await authed('POST', 'doctor/appointments/$id/status',
+  static Future<Appointment> setStatus(
+          int id, AppointmentStatus status) async =>
+      Appointment.fromJson(await authed(
+          'POST', 'doctor/appointments/$id/status',
           body: {'status': status.name}));
 
   static Future<DoctorProfile> saveSchedule(DoctorSchedule schedule) async =>
@@ -465,6 +475,15 @@ class DoctorApi {
     final json = await authed('POST', 'doctor/password',
         body: {'current_password': current, 'password': next});
     await _saveToken(json['token']);
+  }
+
+  /// Deletes the signed-in doctor's account for good and signs out.
+  /// Returns how many upcoming bookings were cancelled with it.
+  static Future<int> deleteAccount(String password) async {
+    final json = await authed('POST', 'doctor/account/delete',
+        body: {'password': password});
+    await logout();
+    return (json['cancelled_appointments'] as num?)?.toInt() ?? 0;
   }
 }
 
@@ -501,7 +520,8 @@ int weekdayIndex(DateTime d) => (d.weekday + 1) % 7;
 String monthName(DateTime d) => _months[d.month - 1];
 
 /// "الأحد 8 نوفمبر"
-String formatDay(DateTime d) => '${kWeekdays[weekdayIndex(d)]} ${d.day} ${monthName(d)}';
+String formatDay(DateTime d) =>
+    '${kWeekdays[weekdayIndex(d)]} ${d.day} ${monthName(d)}';
 
 /// "16:30" -> "4:30 م"
 String formatTime(String hhmm) {

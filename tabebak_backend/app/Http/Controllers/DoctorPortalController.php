@@ -205,6 +205,40 @@ class DoctorPortalController extends Controller
         return $this->json(['token' => DoctorToken::issue($fresh)]);
     }
 
+    /**
+     * POST doctor/account/delete {password}
+     * The doctor deletes their own account: sign-in, number, password and
+     * schedule go, and every token stops working. Bookings still to come are
+     * cancelled so patients see it; the doctor's page in the directory and
+     * past appointments stay.
+     */
+    public function deleteAccount(Request $request)
+    {
+        $account = $this->account($request);
+        $request->validate(['password' => ['required', 'string']], [
+            'password.required' => 'اكتب كلمة المرور لتأكيد الحذف',
+        ]);
+        if (! Hash::check($request->input('password'), $account->password)) {
+            return $this->json([
+                'message' => 'كلمة المرور غير صحيحة',
+                'errors' => ['password' => ['كلمة المرور غير صحيحة']],
+            ], 422);
+        }
+
+        $cancelled = DB::transaction(function () use ($account) {
+            $cancelled = DB::table('doctor_appointments')
+                ->where('doctor_id', $account->doctor_id)
+                ->where('date', '>=', Booking::today())
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->update(['status' => 'cancelled', 'updated_at' => now()]);
+            DB::table('doctor_accounts')->where('id', $account->id)->delete();
+
+            return $cancelled;
+        });
+
+        return $this->json(['deleted' => true, 'cancelled_appointments' => $cancelled]);
+    }
+
     private function account(Request $request)
     {
         return $request->attributes->get('doctor_account');

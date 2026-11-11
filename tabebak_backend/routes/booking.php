@@ -26,6 +26,7 @@ Route::prefix('doctor')->group(function () {
         Route::post('appointments/{id}/status', [DoctorPortalController::class, 'updateStatus'])->whereNumber('id');
         Route::match(['put', 'post'], 'schedule', [DoctorPortalController::class, 'updateSchedule']);
         Route::post('password', [DoctorPortalController::class, 'changePassword']);
+        Route::post('account/delete', [DoctorPortalController::class, 'deleteAccount'])->middleware('throttle:5,1');
         Route::get('reviews', [DoctorPortalController::class, 'reviews']);
         Route::post('reviews/{id}/reply', [DoctorPortalController::class, 'reply'])->whereNumber('id');
 
