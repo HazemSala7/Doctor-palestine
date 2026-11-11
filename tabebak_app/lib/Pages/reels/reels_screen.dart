@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/tabebak_nav_bar.dart';
+import 'package:clinic_dr_alla/Components/ui_kit.dart';
 import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/booking/book_appointment_page.dart';
 import 'package:clinic_dr_alla/Pages/places/place_details_page.dart';
@@ -434,6 +435,11 @@ class _ReelView extends StatelessWidget {
                 _SideButton(
                   icon: muted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
                   onTap: onMute,
+                ),
+                const SizedBox(height: 14),
+                _SideButton(
+                  icon: Icons.outlined_flag_rounded,
+                  onTap: () => reportContent(context, 'فيديو رقم ${reel.id}: ${reel.title}'),
                 ),
                 const SizedBox(height: 14),
                 const Icon(Icons.visibility_rounded, color: Colors.white, size: 26),

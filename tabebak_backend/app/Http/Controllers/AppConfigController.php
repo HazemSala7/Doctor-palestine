@@ -68,16 +68,16 @@ class AppConfigController extends Controller
             return [];
         }
         $today = now('Asia/Hebron')->toDateString();
-        $ads = DB::table('advertisements')
+        $premium = Schema::hasColumn('advertisements', 'placement');
+        $query = DB::table('advertisements')
             ->where('active', 1)
             ->where(fn ($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', $today))
-            ->where(fn ($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', $today))
-            ->orderByDesc('id')
-            ->limit(10)
-            ->get();
-        $premium = Schema::hasColumn('advertisements', 'placement');
-        // Premium first: they also lead the home carousel.
-        $ads = $ads->sortByDesc(fn ($ad) => $premium && $ad->placement === 'premium')->values();
+            ->where(fn ($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', $today));
+        // VIP, then premium, then the rest, so the limit never drops a paid ad.
+        if ($premium) {
+            $query->orderByRaw("CASE placement WHEN 'vip' THEN 0 WHEN 'premium' THEN 1 ELSE 2 END");
+        }
+        $ads = $query->orderByDesc('id')->limit(10)->get();
 
         return $ads->map(fn ($ad) => [
             'id' => (int) $ad->id,
@@ -106,6 +106,10 @@ class AppConfigController extends Controller
         }
         if (method_exists($row, 'getCoordinates')) {
             $row->coordinates = $row->getCoordinates();
+        }
+        // Lets the app offer "book" on the ad, as the doctors list does.
+        if ($type === 'doctor') {
+            $row->booking_enabled = in_array((int) $row->id, \App\Services\Booking::enabledDoctorIds([$row->id]), true);
         }
 
         return $row;

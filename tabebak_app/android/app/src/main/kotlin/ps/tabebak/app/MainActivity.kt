@@ -1,4 +1,4 @@
-package com.tabebak.app
+package ps.tabebak.app
 
 import io.flutter.embedding.android.FlutterActivity
 

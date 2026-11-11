@@ -34,6 +34,25 @@ Future<void> openWhatsApp(String phone,
   await launchUrl(uri, mode: LaunchMode.externalApplication);
 }
 
+/// Reports a reel or review to support, after asking, naming [what] was reported.
+Future<void> reportContent(BuildContext context, String what) async {
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (c) => AlertDialog(
+      title: const Text('الإبلاغ عن هذا المحتوى؟'),
+      content: const Text('سنفتح محادثة مع فريق الدعم لتكتب سبب البلاغ، وسيراجع الفريق المحتوى.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('تراجع')),
+        TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('إبلاغ')),
+      ],
+    ),
+  );
+  if (ok == true) {
+    await openWhatsApp(Repository.config.supportWhatsApp,
+        'مرحباً، أود الإبلاغ عن محتوى مخالف في تطبيق طبيبك:\n$what\nالسبب: ');
+  }
+}
+
 void openPlace(BuildContext context, Place place) {
   Navigator.of(context, rootNavigator: true).push(
     MaterialPageRoute(builder: (_) => PlaceDetailsPage(place: place)),

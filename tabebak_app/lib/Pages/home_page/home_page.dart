@@ -66,9 +66,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  /// When the user left the app; null while they're in it.
+  DateTime? _leftAt;
+
+  /// Back after at least this long counts as entering the app again, so the
+  /// sponsor opens; a quick glance at another app doesn't.
+  static const _awayForSponsor = Duration(seconds: 30);
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _refreshFromDashboard();
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden) {
+      _leftAt ??= DateTime.now();
+    }
+    if (state == AppLifecycleState.resumed) _returned();
+  }
+
+  Future<void> _returned() async {
+    final away = _leftAt == null ? Duration.zero : DateTime.now().difference(_leftAt!);
+    _leftAt = null;
+    await _refreshFromDashboard();
+    if (mounted && away >= _awayForSponsor) {
+      maybeShowPremiumAd(context, returning: true);
+    }
   }
 
   /// Dashboard edits reach an open app when the user returns to it or

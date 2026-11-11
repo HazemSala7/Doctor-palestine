@@ -1,5 +1,6 @@
 import 'package:clinic_dr_alla/Components/animations/animations.dart';
 import 'package:clinic_dr_alla/Components/animations/effects.dart';
+import 'package:clinic_dr_alla/Components/ui_kit.dart';
 import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/booking/booking_widgets.dart';
 import 'package:clinic_dr_alla/data/booking.dart';
@@ -181,6 +182,12 @@ class ReviewTile extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                tooltip: 'إبلاغ',
+                visualDensity: VisualDensity.compact,
+                onPressed: () => reportContent(context, 'تقييم رقم ${r.id} باسم ${r.name}'),
+                icon: const Icon(Icons.outlined_flag_rounded, size: 19, color: kBrandMuted),
               ),
             ],
           ),

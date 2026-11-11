@@ -106,4 +106,35 @@ class PremiumAdTest extends TestCase
         $this->assertSame('الأسنان', $ads[0]['target']['category']['name']);
         $this->assertSame('banner', $ads[1]['placement']);
     }
+
+    public function test_vip_ads_need_a_doctor_or_centre_and_lead_even_past_the_limit()
+    {
+        $this->create(['placement' => 'vip'])->assertStatus(422)->assertJsonValidationErrors(['type']);
+        $this->create(['placement' => 'vip', 'type' => 'city', 'target_id' => 3])->assertStatus(422);
+
+        $this->create(['title' => 'نخبة', 'placement' => 'vip', 'type' => 'doctor', 'target_id' => 6])->assertCreated();
+        $this->create(['title' => 'مميز', 'placement' => 'premium', 'type' => 'doctor', 'target_id' => 6])->assertCreated();
+        for ($i = 1; $i <= 12; $i++) {
+            $this->create(['title' => "عادي $i", 'placement' => 'banner'])->assertCreated();
+        }
+
+        $ads = $this->getJson('/api/app-config')->assertOk()->json('advertisements');
+        $this->assertCount(10, $ads);
+        $this->assertSame(['vip', 'premium', 'banner'], array_slice(array_column($ads, 'placement'), 0, 3));
+        $this->assertSame('نخبة', $ads[0]['title']);
+        $this->assertSame('د. علاء', $ads[0]['target']['name']);
+        $this->assertSame('عادي 12', $ads[2]['title']);
+        $this->assertFalse($ads[0]['target']['booking_enabled']);
+
+        // Once the doctor takes bookings, the ad says so, so the app can offer "book".
+        Schema::create('doctor_accounts', function (Blueprint $t) {
+            $t->id();
+            $t->unsignedBigInteger('doctor_id');
+            $t->boolean('active')->default(1);
+            $t->boolean('booking_enabled')->default(0);
+        });
+        DB::table('doctor_accounts')->insert(['doctor_id' => 6, 'active' => 1, 'booking_enabled' => 1]);
+        $ads = $this->getJson('/api/app-config')->assertOk()->json('advertisements');
+        $this->assertTrue($ads[0]['target']['booking_enabled']);
+    }
 }

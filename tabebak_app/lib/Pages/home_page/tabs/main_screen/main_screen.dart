@@ -7,7 +7,9 @@ import 'package:clinic_dr_alla/Components/brand_widgets.dart';
 import 'package:clinic_dr_alla/Components/ui_kit.dart';
 import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/explore/explore_pages.dart';
+import 'package:clinic_dr_alla/Pages/home_page/tabs/main_screen/home_ad_carousel.dart';
 import 'package:clinic_dr_alla/Pages/home_page/tabs/main_screen/jobs_banner.dart';
+import 'package:clinic_dr_alla/Pages/home_page/tabs/main_screen/vip_spotlight.dart';
 import 'package:clinic_dr_alla/Pages/places/places_page.dart';
 import 'package:clinic_dr_alla/data/app_config.dart';
 import 'package:clinic_dr_alla/data/demo_data.dart';
@@ -114,6 +116,7 @@ class _MainScreenState extends State<MainScreen>
               parent: AlwaysScrollableScrollPhysics()),
           slivers: [
             SliverToBoxAdapter(child: _hero()),
+            SliverToBoxAdapter(child: _vipStrip()),
             SliverToBoxAdapter(child: _promos()),
             SliverToBoxAdapter(
               child: SectionHeader(
@@ -377,6 +380,13 @@ class _MainScreenState extends State<MainScreen>
         ),
       );
 
+  /// Its own section for VIP ("مميز جداً") doctors and centres; nothing when none run.
+  Widget _vipStrip() {
+    final vip = Repository.config.vipAds;
+    if (vip.isEmpty) return const SizedBox.shrink();
+    return VipSpotlight(key: ValueKey('vip${vip.length}'), ads: vip);
+  }
+
   Widget _promos() {
     if (kUseDemoData) return const _PromoCarousel(promos: DemoData.promos);
     return FutureBuilder(
@@ -385,61 +395,20 @@ class _MainScreenState extends State<MainScreen>
         final List raw = (snap.data is Map ? snap.data['sliders'] : null) ?? [];
         final slides = raw.map((e) => SliderModel.fromJson(e)).toList();
         // Running advertisements from the dashboard come first; they open their target.
-        final ads = Repository.config.ads;
+        // VIP ads have their own section.
+        final vip = Repository.config.vipAds;
+        final ads = [for (final a in Repository.config.ads) if (!vip.contains(a)) a];
         if (slides.isEmpty && ads.isEmpty) return const SizedBox(height: 8);
-        return SizedBox(
-          height: 170,
-          child: PageView(
-            controller: PageController(viewportFraction: 0.88),
-            children: [
-              for (final ad in ads)
-                _banner(ad.image, title: ad.title, onTap: () => _openAd(ad)),
-              for (final s in slides) _banner(s.image),
-            ],
-          ),
-        );
+        final all = [
+          for (final ad in ads)
+            AdSlide(ad.image, title: ad.title, onTap: () => _openAd(ad)),
+          for (final s in slides) AdSlide(s.image),
+        ];
+        // A new count restarts the strip, so its loop is built for what's there.
+        return HomeAdCarousel(key: ValueKey(all.length), slides: all);
       },
     );
   }
-
-  Widget _banner(String image, {String? title, VoidCallback? onTap}) => Padding(
-        padding: const EdgeInsets.fromLTRB(6, 18, 6, 0),
-        child: PressableScale(
-          pressedScale: 0.97,
-          onTap: onTap,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(26),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                NetImage(image, fit: BoxFit.cover, width: double.infinity),
-                if (title != null && title.isNotEmpty)
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(14, 24, 14, 10),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [Color(0xAA000000), Colors.transparent],
-                        ),
-                      ),
-                      child: Text(title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 15)),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      );
 
   void _openAd(Ad ad) {
     if (ad.place != null) {

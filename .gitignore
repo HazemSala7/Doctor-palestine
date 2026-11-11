@@ -14,6 +14,14 @@
 !/tabebak_backend/storage/framework/views/.gitignore
 !/tabebak_backend/storage/logs/.gitignore
 
+# Signing keys, wherever they end up.
+*.jks
+*.keystore
+key.properties
+
+# Release bundle: built output, large, rebuilt from the code.
+/google_play/*.aab
+
 # Editor settings and Windows clutter.
 .vscode/
 Thumbs.db
