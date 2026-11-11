@@ -42,7 +42,7 @@ class AdminResourceController extends Controller
         // `enums`: allowed values per column.
         'advertisements' => [
             'table' => 'advertisements', 'images' => ['image'], 'required' => ['title', 'image'],
-            'enums' => ['placement' => ['banner', 'premium']],
+            'enums' => ['placement' => ['banner', 'premium', 'vip']],
         ],
         // Booking. `password`: hashed on write, never returned, required only on create.
         // `hidden`: never returned. `unique`: one row per value. `phones`: stored as digits.
@@ -466,8 +466,8 @@ class AdminResourceController extends Controller
             $data[$col] = ($value === '' || $value === null) ? null : $value;
         }
 
-        // A premium ad opens a doctor's or centre's page, so it needs one.
-        if ($resource === 'advertisements' && ($data['placement'] ?? null) === 'premium'
+        // A premium or VIP ad opens a doctor's or centre's page, so it needs one.
+        if ($resource === 'advertisements' && in_array($data['placement'] ?? null, ['premium', 'vip'], true)
             && (in_array($data['type'] ?? null, [null, 'job', 'city'], true) || empty($data['target_id']))) {
             $message = 'الإعلان المميز يجب أن يفتح صفحة طبيب أو مركز: اختر النوع والسجل المستهدف';
             abort(response()->json(['message' => $message, 'errors' => ['type' => [$message]]], 422));

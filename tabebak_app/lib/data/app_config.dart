@@ -29,6 +29,10 @@ class Ad {
   /// Premium: a full-screen window on app open, and [place] is pinned as
   /// "sponsored" at the top of its list.
   final bool premium;
+
+  /// VIP ("مميز جداً"): everything [premium] does, and [place] gets its own
+  /// section on the home screen instead of the ordinary carousel.
+  final bool vip;
   final String description;
 
   const Ad({
@@ -39,6 +43,7 @@ class Ad {
     this.type,
     this.cityId,
     this.premium = false,
+    this.vip = false,
     this.description = '',
   });
 
@@ -54,7 +59,8 @@ class Ad {
       type: type,
       place: kind != null && target != null ? Place.fromApi(kind, target) : null,
       cityId: type == 'city' ? (target?['id'] as int?) : null,
-      premium: j['placement'] == 'premium',
+      premium: j['placement'] == 'premium' || j['placement'] == 'vip',
+      vip: j['placement'] == 'vip',
       description: j['description'] ?? '',
     );
   }
@@ -100,6 +106,9 @@ class AppConfig {
   /// Premium ads that open a doctor or centre.
   List<Ad> get premiumAds =>
       [for (final a in ads) if (a.premium && a.place != null) a];
+
+  /// VIP ads for the home screen's own section; each shows its doctor or centre.
+  List<Ad> get vipAds => [for (final a in ads) if (a.vip && a.place != null) a];
 
   /// '' when the dashboard left it empty.
   String setting(String key) => settings[key]?.trim() ?? '';
