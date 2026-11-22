@@ -122,7 +122,7 @@ class VipCard extends StatelessWidget {
                                         const LinearGradient(colors: _gold),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: const Text('👑 الراعي الحصري',
+                                  child: const Text('👑 الراعي الرسمي',
                                       style: TextStyle(
                                           color: Color(0xFF3E2C00),
                                           fontSize: 11.5,
@@ -292,7 +292,7 @@ class VipCard extends StatelessWidget {
   }
 }
 
-/// «👑 الراعي الحصري لتطبيق طبيبك» between two gold rules.
+/// «👑 الراعي الرسمي لتطبيق طبيبك» between two gold rules.
 class _SponsorHeader extends StatelessWidget {
   const _SponsorHeader();
 
@@ -351,7 +351,7 @@ class _SponsorHeader extends StatelessWidget {
                   offset: const Offset(0, 3)),
             ],
           ),
-          child: const Text('👑 الراعي الحصري',
+          child: const Text('👑 الراعي الرسمي',
               style: TextStyle(
                   color: Color(0xFF3E2C00),
                   fontWeight: FontWeight.w900,

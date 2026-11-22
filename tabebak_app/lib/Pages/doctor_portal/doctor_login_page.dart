@@ -5,11 +5,13 @@ import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/booking/booking_widgets.dart';
 import 'package:clinic_dr_alla/Pages/doctor_portal/doctor_dashboard_page.dart';
 import 'package:clinic_dr_alla/data/booking.dart';
+import 'package:clinic_dr_alla/data/models.dart' show kPatientFeatures;
 import 'package:clinic_dr_alla/data/repository.dart';
 import 'package:flutter/material.dart';
 
 /// Opens the dashboard when a doctor is signed in, otherwise the login.
 Future<void> openDoctorPortal(BuildContext context) async {
+  if (!kPatientFeatures) return; // Android only, see kPatientFeatures.
   final signedIn = await DoctorApi.signedIn;
   if (!context.mounted) return;
   Navigator.push(
@@ -54,7 +56,8 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => DoctorDashboardPage(profile: profile)),
+        MaterialPageRoute(
+            builder: (_) => DoctorDashboardPage(profile: profile)),
       );
     } on ApiException catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -100,7 +103,8 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
                         textInputAction: TextInputAction.next,
                         autofillHints: const [AutofillHints.telephoneNumber],
                         decoration: fieldDecoration('رقم الهاتف',
-                            hint: '059xxxxxxx', icon: Icons.phone_iphone_rounded),
+                            hint: '059xxxxxxx',
+                            icon: Icons.phone_iphone_rounded),
                         validator: (v) =>
                             (v ?? '').trim().isEmpty ? 'أدخل رقم الهاتف' : null,
                       ),
@@ -132,7 +136,8 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
                                 margin: const EdgeInsets.only(top: 12),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: kCancelledColor.withValues(alpha: 0.08),
+                                  color:
+                                      kCancelledColor.withValues(alpha: 0.08),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: Text(_error!,
@@ -187,7 +192,8 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.chat_rounded, color: Colors.white, size: 18),
+                          Icon(Icons.chat_rounded,
+                              color: Colors.white, size: 18),
                           SizedBox(width: 6),
                           Text('تواصل عبر واتساب',
                               style: TextStyle(

@@ -103,10 +103,10 @@ void main() {
         expect(tester.takeException(), isNull);
 
         expect(find.text('لتطبيق طبيبك'), findsOneWidget, reason: 'its own section header');
-        expect(find.text('👑 الراعي الحصري'), findsWidgets);
+        expect(find.text('👑 الراعي الرسمي'), findsWidgets);
         expect(find.text('د. علاء سالم'), findsWidgets);
         expect(find.text('طب الأسنان • طولكرم'), findsWidgets);
-        expect(find.text('4.8'), findsWidgets);
+        expect(find.text('4.8'), findsNothing, reason: 'reviews are switched off');
         expect(find.textContaining('خصم 20٪ على تبييض الأسنان'), findsWidgets);
         expect(find.text('احجز موعدك'), findsWidgets, reason: 'the doctor takes bookings');
         expect(find.byIcon(Icons.call_rounded), findsWidgets);

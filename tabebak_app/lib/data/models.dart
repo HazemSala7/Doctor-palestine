@@ -1,4 +1,17 @@
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
+
+/// Reviews and ratings are switched off for now: no stars, no review
+/// sections, no "rate your visit". The data stays on the server; turning
+/// this back on brings everything back.
+const kReviewsEnabled = false;
+
+/// Booking, "my appointments" and the doctors' sign-in exist on Android only.
+/// Apple accepts the iPhone app from an individual developer account only as
+/// a directory that collects no personal data (guideline 5.1.1(ix)), so on
+/// iOS these features are hidden. Calling or messaging a clinic still works.
+bool get kPatientFeatures => defaultTargetPlatform != TargetPlatform.iOS;
 
 /// A record with no picture comes back from the API as the bare ".../storage/"
 /// folder; the screens must see that as "no image" and show their fallback.
@@ -116,8 +129,8 @@ class Place {
   final String address;
   final String description;
   final String phone;
-  final double? rating;
-  final int? reviews;
+  final double? _rating;
+  final int? _reviews;
   final int? experience;
   final int? fee;
 
@@ -135,8 +148,11 @@ class Place {
   final List<String> tags;
   final bool verified;
 
-  /// The doctor has an account and takes bookings in the app.
-  final bool bookingEnabled;
+  final bool _bookingEnabled;
+
+  /// The doctor has an account and takes bookings in the app, and the app
+  /// offers booking on this platform ([kPatientFeatures]).
+  bool get bookingEnabled => kPatientFeatures && _bookingEnabled;
 
   /// Dashboard switches: shown in the home screen's featured doctors /
   /// on-duty pharmacies.
@@ -157,8 +173,8 @@ class Place {
     required this.address,
     required this.description,
     required this.phone,
-    this.rating,
-    this.reviews,
+    double? rating,
+    int? reviews,
     this.experience,
     this.fee,
     this.opensAt,
@@ -171,12 +187,18 @@ class Place {
     this.logoUrl,
     this.tags = const [],
     this.verified = false,
-    this.bookingEnabled = false,
+    bool bookingEnabled = false,
     this.featured = false,
     this.onDuty = false,
     this.facebookUrl,
     this.instagramUrl,
-  });
+  })  : _rating = rating,
+        _reviews = reviews,
+        _bookingEnabled = bookingEnabled;
+
+  /// Null while reviews are switched off ([kReviewsEnabled]), so no screen shows a rating.
+  double? get rating => kReviewsEnabled ? _rating : null;
+  int? get reviews => kReviewsEnabled ? _reviews : null;
 
   bool get hasSocial => facebookUrl != null || instagramUrl != null;
 
@@ -221,8 +243,10 @@ class Place {
       reviews: reviewCount > 0 ? reviewCount : null,
       lat: double.tryParse('${first?['lat'] ?? ''}'),
       lng: double.tryParse('${first?['lng'] ?? ''}'),
-      coverUrl: mediaUrl(kind == PlaceKind.doctor ? j['image'] : j['cover_image']),
-      logoUrl: mediaUrl(kind == PlaceKind.doctor ? j['image'] : j['logo_image']),
+      coverUrl:
+          mediaUrl(kind == PlaceKind.doctor ? j['image'] : j['cover_image']),
+      logoUrl:
+          mediaUrl(kind == PlaceKind.doctor ? j['image'] : j['logo_image']),
       bookingEnabled: j['booking_enabled'] == true,
       featured: j['featured'] == true || j['featured'] == 1,
       onDuty: j['on_duty'] == true || j['on_duty'] == 1,

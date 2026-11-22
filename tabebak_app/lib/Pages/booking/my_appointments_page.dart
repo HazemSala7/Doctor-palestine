@@ -39,10 +39,11 @@ class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
         final r = await MyReviews.ratingFor(PlaceKind.doctor, id);
         if (r != null) _ratings[id] = r;
       }
-      if (mounted) setState(() {
-        _items = items;
-        _error = null;
-      });
+      if (mounted)
+        setState(() {
+          _items = items;
+          _error = null;
+        });
     } on ApiException catch (e) {
       if (mounted) setState(() => _error = e.message);
     }
@@ -73,9 +74,8 @@ class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
     try {
       final updated = await BookingApi.cancel(a.code!);
       if (!mounted) return;
-      setState(() => _items = [
-            for (final i in _items!) i.code == a.code ? updated : i
-          ]);
+      setState(() =>
+          _items = [for (final i in _items!) i.code == a.code ? updated : i]);
       showMessage(context, 'تم إلغاء الموعد');
     } on ApiException catch (e) {
       if (mounted) showMessage(context, e.message);
@@ -101,8 +101,10 @@ class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
   @override
   Widget build(BuildContext context) {
     final items = _items;
-    final upcoming = items?.where((a) => a.isUpcoming && a.isActive).toList() ?? [];
-    final past = items?.where((a) => !(a.isUpcoming && a.isActive)).toList() ?? [];
+    final upcoming =
+        items?.where((a) => a.isUpcoming && a.isActive).toList() ?? [];
+    final past =
+        items?.where((a) => !(a.isUpcoming && a.isActive)).toList() ?? [];
 
     return Scaffold(
       backgroundColor: kBrandSurface,
@@ -126,7 +128,8 @@ class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
                 child: EmptyState(title: 'تعذّر التحميل', subtitle: _error!),
               )
             else if (items == null)
-              const SliverFillRemaining(hasScrollBody: false, child: AppLoader())
+              const SliverFillRemaining(
+                  hasScrollBody: false, child: AppLoader())
             else if (items.isEmpty)
               const SliverFillRemaining(
                 hasScrollBody: false,
@@ -143,7 +146,8 @@ class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
               ],
               if (past.isNotEmpty) ...[
                 const SliverToBoxAdapter(
-                    child: SectionHeader(title: 'السابقة والملغاة', emoji: '🗂️')),
+                    child:
+                        SectionHeader(title: 'السابقة والملغاة', emoji: '🗂️')),
                 _list(past),
               ],
               const SliverToBoxAdapter(child: SizedBox(height: 40)),
@@ -211,7 +215,8 @@ class _AppointmentCard extends StatelessWidget {
                       : Container(
                           color: kBrandSky,
                           alignment: Alignment.center,
-                          child: const Text('🩺', style: TextStyle(fontSize: 26)),
+                          child:
+                              const Text('🩺', style: TextStyle(fontSize: 26)),
                         ),
                 ),
               ),
@@ -266,7 +271,7 @@ class _AppointmentCard extends StatelessWidget {
             ),
           ],
           // After the doctor marks the visit done, the patient can rate it.
-          if (a.status == AppointmentStatus.completed) ...[
+          if (kReviewsEnabled && a.status == AppointmentStatus.completed) ...[
             const SizedBox(height: 12),
             _SmallAction(
               label: myRating == null
@@ -292,7 +297,10 @@ class _SmallAction extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _SmallAction(
-      {required this.label, required this.icon, required this.color, this.onTap});
+      {required this.label,
+      required this.icon,
+      required this.color,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {

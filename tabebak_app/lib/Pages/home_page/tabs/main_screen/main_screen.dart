@@ -145,8 +145,8 @@ class _MainScreenState extends State<MainScreen>
             ),
             SliverToBoxAdapter(
               child: SectionHeader(
-                title: 'أطباء مميزون',
-                emoji: '⭐',
+                title: 'أطباء من بلدي',
+                emoji: '🇵🇸',
                 onSeeAll: () => widget.changeTabIndex(1),
               ),
             ),

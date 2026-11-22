@@ -25,7 +25,7 @@ bool _sponsorShownThisLaunch = false;
 bool _sponsorOpen = false;
 
 /// On every entry to the app: a VIP («مميز جداً») ad opens as the app's
-/// exclusive sponsor, at launch and each time the user comes back to the app
+/// official sponsor, at launch and each time the user comes back to the app
 /// ([returning]). Without one, a premium ad opens at launch, at most once a
 /// day per ad. With several, the one shown least recently goes first.
 Future<void> maybeShowPremiumAd(BuildContext context, {bool returning = false}) async {
@@ -135,7 +135,7 @@ Future<void> _openSponsor(BuildContext context, List<Ad> ads) async {
   );
 }
 
-/// The app's exclusive sponsor: the doctor's or centre's photo, name and
+/// The app's official sponsor: the doctor's or centre's photo, name and
 /// details up front, under the ad's picture, with the offer and a way to book.
 class SponsorWindow extends StatelessWidget {
   final Ad ad;
@@ -216,7 +216,7 @@ class SponsorWindow extends StatelessWidget {
                                                 gradient: const LinearGradient(colors: gold),
                                                 borderRadius: BorderRadius.circular(20),
                                               ),
-                                              child: const Text('👑 الراعي الحصري',
+                                              child: const Text('👑 الراعي الرسمي',
                                                   style: TextStyle(
                                                       color: Color(0xFF3E2C00),
                                                       fontWeight: FontWeight.w900,

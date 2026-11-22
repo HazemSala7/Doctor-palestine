@@ -7,6 +7,7 @@ import 'package:clinic_dr_alla/Constants/app_theme.dart';
 import 'package:clinic_dr_alla/Pages/about_us/about_us.dart';
 import 'package:clinic_dr_alla/Pages/booking/my_appointments_page.dart';
 import 'package:clinic_dr_alla/Pages/doctor_portal/doctor_login_page.dart';
+import 'package:clinic_dr_alla/data/models.dart' show kPatientFeatures;
 import 'package:clinic_dr_alla/Pages/home_page/tabs/favourite_screen/favourite_screen.dart';
 import 'package:clinic_dr_alla/Pages/explore/explore_pages.dart';
 import 'package:clinic_dr_alla/Pages/privacy_policy/privacy_policy.dart';
@@ -96,7 +97,9 @@ class Profile extends StatelessWidget {
                         FutureBuilder<PackageInfo>(
                           future: PackageInfo.fromPlatform(),
                           builder: (context, snap) => Text(
-                              snap.hasData ? 'الإصدار ${snap.data!.version}' : '',
+                              snap.hasData
+                                  ? 'الإصدار ${snap.data!.version}'
+                                  : '',
                               style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.75),
                                   fontSize: 12.5)),
@@ -129,12 +132,14 @@ class Profile extends StatelessWidget {
                       },
                     ))),
           ]),
-          _group('المواعيد', [
-            _Tile('📅', 'مواعيدي', const Color(0xFF16A34A),
-                () => push(const MyAppointmentsPage())),
-            _Tile('🩺', 'دخول الأطباء', kBrandDark,
-                () => openDoctorPortal(context)),
-          ]),
+          // Android only: see kPatientFeatures.
+          if (kPatientFeatures)
+            _group('المواعيد', [
+              _Tile('📅', 'مواعيدي', const Color(0xFF16A34A),
+                  () => push(const MyAppointmentsPage())),
+              _Tile('🩺', 'دخول الأطباء', kBrandDark,
+                  () => openDoctorPortal(context)),
+            ]),
           _group('عن التطبيق', [
             _Tile('ℹ️', 'من نحن', kBrandPrimary, () => push(WhoWeAre())),
             _Tile('🔒', 'سياسة الخصوصية', const Color(0xFF546E7A),
@@ -145,8 +150,12 @@ class Profile extends StatelessWidget {
               _Tile('📞', 'اتصل بنا: ${config.supportPhone}', kBrandPrimary,
                   () => callNumber(config.supportPhone)),
             if (config.supportEmail.isNotEmpty)
-              _Tile('✉️', config.supportEmail, const Color(0xFF546E7A),
-                  () => launchUrl(Uri(scheme: 'mailto', path: config.supportEmail))),
+              _Tile(
+                  '✉️',
+                  config.supportEmail,
+                  const Color(0xFF546E7A),
+                  () => launchUrl(
+                      Uri(scheme: 'mailto', path: config.supportEmail))),
           ]),
           const SizedBox(height: 22),
           // Links set on the dashboard; empty ones are hidden.
@@ -163,14 +172,19 @@ class Profile extends StatelessWidget {
                   _social(Image.asset('assets/images/instagram.png'),
                       const Color(0xFFE1306C), config.instagram),
                 if (config.tiktok.isNotEmpty)
-                  _social(const Icon(Icons.music_note_rounded, color: Colors.black),
-                      const Color(0xFF111111), config.tiktok),
+                  _social(
+                      const Icon(Icons.music_note_rounded, color: Colors.black),
+                      const Color(0xFF111111),
+                      config.tiktok),
                 if (config.website.isNotEmpty)
-                  _social(const Icon(Icons.language_rounded, color: kBrandPrimary),
-                      kBrandPrimary, config.website),
+                  _social(
+                      const Icon(Icons.language_rounded, color: kBrandPrimary),
+                      kBrandPrimary,
+                      config.website),
                 PressableScale(
                   onTap: _whatsApp,
-                  child: _socialCircle(Image.asset('assets/images/whatsapp.png'),
+                  child: _socialCircle(
+                      Image.asset('assets/images/whatsapp.png'),
                       const Color(0xFF25D366)),
                 ),
               ],

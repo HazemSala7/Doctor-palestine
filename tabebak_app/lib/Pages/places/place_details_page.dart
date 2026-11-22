@@ -358,7 +358,8 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
           PlaceStaffSection(place: p, delay: 250),
 
           // Patients' ratings (approved on the dashboard).
-          if (!kUseDemoData) PlaceReviewsSection(place: p, delay: 260),
+          if (kReviewsEnabled && !kUseDemoData)
+            PlaceReviewsSection(place: p, delay: 260),
 
           // Social links set on the dashboard.
           if (p.hasSocial)
@@ -370,15 +371,21 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                 children: [
                   if (p.facebookUrl != null)
                     Expanded(
-                      child: _socialButton('فيسبوك', 'assets/images/facebook.png',
-                          const Color(0xFF1877F2), p.facebookUrl!),
+                      child: _socialButton(
+                          'فيسبوك',
+                          'assets/images/facebook.png',
+                          const Color(0xFF1877F2),
+                          p.facebookUrl!),
                     ),
                   if (p.facebookUrl != null && p.instagramUrl != null)
                     const SizedBox(width: 10),
                   if (p.instagramUrl != null)
                     Expanded(
-                      child: _socialButton('إنستغرام', 'assets/images/instagram.png',
-                          const Color(0xFFE1306C), p.instagramUrl!),
+                      child: _socialButton(
+                          'إنستغرام',
+                          'assets/images/instagram.png',
+                          const Color(0xFFE1306C),
+                          p.instagramUrl!),
                     ),
                 ],
               ),
@@ -421,7 +428,8 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                         child: FloatingWidget(
                           distance: 10,
                           period: Duration(milliseconds: 1200),
-                          child: EmojiText('📍', style: TextStyle(fontSize: 44)),
+                          child:
+                              EmojiText('📍', style: TextStyle(fontSize: 44)),
                         ),
                       ),
                       PositionedDirectional(
@@ -488,7 +496,9 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
               const SizedBox(width: 8),
               Text(label,
                   style: TextStyle(
-                      color: color, fontWeight: FontWeight.w800, fontSize: 14.5)),
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14.5)),
             ],
           ),
         ),
@@ -663,44 +673,44 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                 p.phone.isEmpty ? null : () => callNumber(p.phone),
               ),
             ] else
-            Expanded(
-              child: PressableScale(
-                onTap: p.phone.isEmpty ? null : () => callNumber(p.phone),
-                child: Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                        colors: [Color(0xFF16A34A), Color(0xFF22C55E)]),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                          color: kBrandSuccess.withValues(alpha: 0.4),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6)),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const HeartbeatPulse(
-                        strength: 0.15,
-                        child: Icon(Icons.call_rounded, color: Colors.white),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        p.kind == PlaceKind.doctor
-                            ? 'اتصل واحجز موعدك'
-                            : 'اتصل الآن',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 15.5),
-                      ),
-                    ],
+              Expanded(
+                child: PressableScale(
+                  onTap: p.phone.isEmpty ? null : () => callNumber(p.phone),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                          colors: [Color(0xFF16A34A), Color(0xFF22C55E)]),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                            color: kBrandSuccess.withValues(alpha: 0.4),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6)),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const HeartbeatPulse(
+                          strength: 0.15,
+                          child: Icon(Icons.call_rounded, color: Colors.white),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          p.kind == PlaceKind.doctor
+                              ? 'اتصل واحجز موعدك'
+                              : 'اتصل الآن',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15.5),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
             const SizedBox(width: 10),
             _roundAction(
               const Color(0xFF25D366),

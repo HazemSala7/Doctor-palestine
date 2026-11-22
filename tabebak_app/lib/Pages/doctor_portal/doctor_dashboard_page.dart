@@ -13,6 +13,7 @@ import 'package:clinic_dr_alla/Pages/doctor_portal/doctor_team_page.dart';
 import 'package:clinic_dr_alla/Pages/doctor_portal/doctor_reviews_page.dart';
 import 'package:clinic_dr_alla/Pages/doctor_portal/doctor_schedule_page.dart';
 import 'package:clinic_dr_alla/data/booking.dart';
+import 'package:clinic_dr_alla/data/models.dart' show kReviewsEnabled;
 import 'package:flutter/material.dart';
 
 /// Confirms with the password before the doctor's account is deleted.
@@ -329,14 +330,15 @@ class _DoctorDashboardPageState extends State<DoctorDashboardPage>
                 emoji: '🩺',
                 colors: const [kBrandDark, kBrandPrimary, Color(0xFF29B6F6)],
                 actions: [
-                  GlassButton(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const DoctorReviewsPage())),
-                    child: const Icon(Icons.star_rounded,
-                        color: Colors.white, size: 22),
-                  ),
+                  if (kReviewsEnabled)
+                    GlassButton(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const DoctorReviewsPage())),
+                      child: const Icon(Icons.star_rounded,
+                          color: Colors.white, size: 22),
+                    ),
                   GlassButton(
                     onTap: _openSchedule,
                     child: const Icon(Icons.tune_rounded,

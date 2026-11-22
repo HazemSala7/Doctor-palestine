@@ -41,18 +41,19 @@ Widget _host(Widget child, [double scale = 1]) => MaterialApp(
 
 void main() {
   for (final scale in [1.0, 1.6]) {
-    testWidgets('presents the exclusive sponsor and fits at text size $scale', (tester) async {
+    testWidgets('presents the official sponsor and fits at text size $scale', (tester) async {
       _phone(tester);
       final ad = Ad.fromJson(_json(1, 'vip', _doctor));
       await tester.pumpWidget(_host(Scaffold(body: SponsorWindow(ad: ad)), scale));
       await tester.pump(const Duration(seconds: 1));
       expect(tester.takeException(), isNull);
 
-      expect(find.text('👑 الراعي الحصري'), findsOneWidget);
+      expect(find.text('👑 الراعي الرسمي'), findsOneWidget);
       expect(find.text('لتطبيق طبيبك'), findsOneWidget);
       expect(find.text('د. علاء سالم'), findsOneWidget);
       expect(find.text('طب الأسنان • طولكرم'), findsOneWidget);
-      expect(find.text('4.5 (12)'), findsOneWidget);
+      expect(find.text('4.5 (12)'), findsNothing, reason: 'reviews are switched off');
+      expect(find.byIcon(Icons.star_rounded), findsNothing);
       expect(find.text('ابتسامة هوليوود'), findsOneWidget);
       expect(find.text('خصم 20٪ على تبييض الأسنان'), findsOneWidget);
       expect(find.text('احجز موعدك'), findsOneWidget);
