@@ -698,7 +698,8 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          p.kind == PlaceKind.doctor
+                          // No word of booking on iOS: see kPatientFeatures.
+                          p.kind == PlaceKind.doctor && kPatientFeatures
                               ? 'اتصل واحجز موعدك'
                               : 'اتصل الآن',
                           style: const TextStyle(
